@@ -1,0 +1,70 @@
+---
+- name: Deploy tar1090
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: tar1090
+        namespace: default
+        labels:
+          app: tar1090
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: tar1090
+        template:
+          metadata:
+            labels:
+              app: tar1090
+          spec:
+            containers:
+            - name: tar1090
+              image: "{{ tar1090_image }}"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: LAT
+                value: "{{ lat }}"
+              - name: LONG
+                value: "{{ lon }}"
+              - name: BEASTHOST
+                value: "{{ adsb_host }}"
+              - name: MLATHOST
+                value: "{{ mlat_host }}"
+              ports:
+              - name: web
+                containerPort: 80
+              volumeMounts:
+              - mountPath: /var/globe_history
+                name: readsb-run
+                subPath: tar1090
+            volumes:
+            - name: readsb-run
+              persistentVolumeClaim:
+                claimName: readsb-run
+
+- name: Deploy tar1090 service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: tar1090-web
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ tar1090_ip }}"
+        selector:
+          app: tar1090
+        ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 80
+          name : web
+        type: LoadBalancer 

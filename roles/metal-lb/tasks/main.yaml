@@ -1,0 +1,25 @@
+---
+- name: Deploy Metallb secretkey
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: memberlist
+        namespace: metallb-system
+      type: Opaque
+      data:
+        secretkey: "{{ metallb_secretkey }}"
+
+- name: Deploy Metallb config
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: metallb-system
+        name: config
+      data:
+        config: "{{ metallb_config }}"

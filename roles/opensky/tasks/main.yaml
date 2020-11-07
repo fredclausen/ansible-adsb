@@ -1,0 +1,43 @@
+---
+- name: Deploy opensky
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: opensky
+        namespace: default
+        labels:
+          app: opensky
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: opensky
+        template:
+          metadata:
+            labels:
+              app: opensky
+          spec:
+            containers:
+            - name: opensky
+              image: "{{ opensky_image }}"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: LAT
+                value: "{{ lat }}"
+              - name: LONG
+                value: "{{ lon }}"
+              - name: BEASTHOST
+                value: "{{ adsb_host }}"
+              - name: OPENSKY_SERIAL
+                value: "{{ opensky_serial }}"
+              - name: OPENSKY_USERNAME
+                value: "{{ opensky_username }}"
+              - name: ALT
+                value: "{{ alt_meters }}"

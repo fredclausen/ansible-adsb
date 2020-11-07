@@ -1,0 +1,63 @@
+---
+- name: Deploy cloudflared
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: cloudflared
+        namespace: default
+        labels:
+          app: cloudflared
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: cloudflared
+        template:
+          metadata:
+            labels:
+              app: cloudflared
+          spec:
+            containers:
+            - name: pihole
+              image: "{{ cloudflared_image }}"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: TUNNEL_DNS_UPSTREAM
+                value: "https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
+              - name: TUNNEL_DNS_PORT
+                value: "5353"
+              ports:
+              - name : dns
+                protocol : UDP
+                containerPort: 5353
+              - name: metrics
+                protocol: TCP
+                containerPort: 49312
+
+
+- name: Deploy cloudflared service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: cloudfared-dns-service
+        namespace: default
+      spec:
+        loadBalancerIP: "{{ cloudflared_ip }}"
+        selector:
+          app: cloudflared
+        ports:
+        - protocol: UDP
+          port: 5353
+          targetPort: 5353
+          name : dns
+        type: LoadBalancer

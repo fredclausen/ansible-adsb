@@ -1,0 +1,46 @@
+---
+- name: Copy NUT Server Config
+  copy:
+    src: nut-master.conf
+    dest: /etc/nut/nut.conf
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+- name: Copy NUT User Config
+  copy:
+    src: upsd.users
+    dest: /etc/nut/
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+- name: Copy NUT Monitor Config
+  copy:
+    src: upsmon-master.conf
+    dest: /etc/nut/upsmon.conf
+    owner: root
+    group: root
+    mode: '0644'
+    force: 
+- name: Copy NUT UPSD Config
+  copy:
+    src: upsd.conf
+    dest: /etc/nut/
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+- name: Copy NUT UPS Config
+  copy:
+    src: ups.conf
+    dest: /etc/nut/
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+
+- name: restart NUT
+  service:
+    name: nut-server
+    state: restarted

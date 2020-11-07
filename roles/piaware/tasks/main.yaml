@@ -1,0 +1,68 @@
+---
+- name: Deploy piaware
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: piaware
+        namespace: default
+        labels:
+          app: piaware
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: piaware
+        template:
+          metadata:
+            labels:
+              app: piaware
+          spec:
+            containers:
+            - name: piaware
+              image: "{{ piaware_image }}"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: LAT
+                value: "{{ lat }}"
+              - name: LONG
+                value: "{{ lon }}"
+              - name: BEASTHOST
+                value: "{{ adsb_host }}"
+              - name: FEEDER_ID
+                value: "{{ piaware_feeder_id }}"
+              - name: UAT_RECEIVER_HOST
+                value: "{{ uat_host }}"
+              - name: UAT_RECEIVER_TYPE
+                value: "relay"
+              ports:
+              - name: web
+                containerPort: 8080
+              - name: mlat
+                containerPort: 30104
+
+- name: Deploy piaware service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: piaware
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ piaware_ip }}"
+        selector:
+          app: piaware
+        ports:
+        - protocol: TCP
+          port: 30104
+          targetPort: 30104
+          name : beast
+        type: LoadBalancer 

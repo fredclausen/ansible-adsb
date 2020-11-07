@@ -1,0 +1,181 @@
+---
+- name: label node with RTLSDR dongle for readsb
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Node
+      metadata:
+        labels:
+          readsb: "usb"
+        name: "{{ readsb_node }}"
+
+- name: Deploy readsb PV
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: readsb
+      spec:
+        capacity:
+          storage: 50Gi
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          server: "{{ nfs_share_ip }}"
+          path: "{{ nfs_share_path }}"
+
+- name: Deploy readsb PVC
+  k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: readsb-run
+        namespace: default
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 50Gi
+
+- name: Deploy readsb
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: readsb
+        namespace: default
+        labels:
+          app: readsb
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: readsb
+        template:
+          metadata:
+            labels:
+              app: readsb
+          spec:
+            nodeSelector:
+              readsb: usb
+            containers:
+            - name: readsb
+              image: "{{ readsb_image }}"
+              imagePullPolicy: Always
+              securityContext:
+                privileged: true
+              env:
+              - name: VERBOSE_LOGGING
+                value: "true"
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: READSB_LAT
+                value: "{{ lat }}"
+              - name: READSB_LON
+                value: "{{ lon }}"
+              - name: READSB_DEVICE_TYPE
+                value: "{{ readsb_device_type }}"
+              - name: READSB_FIX
+                value: "true"
+              - name: READSB_GAIN
+                value: "autogain"
+              - name: READSB_MODEAC
+                value: "true"
+              - name: READSB_RX_LOCATION_ACCURACY
+                value: "2"
+              - name: READSB_STATS_RANGE
+                value: "true"
+              - name: READSB_NET_ENABLE
+                value: "true"
+              - name: READSB_RTLSDR_DEVICE
+                value: "{{ readsb_serial }}"
+              - name: READSB_RTLSDR_PPM
+                value: "2"
+              - name: READSB_NET_CONNECTOR
+                value: "{{ readsb_net_connector }}"
+              - name: INFLUXDBURL
+                value: "http://{{ influxdb_ip }}:8086"
+              ports:
+              - name: web
+                containerPort: 8080
+              - name : raw-input
+                containerPort: 30001
+              - name : raw-output
+                containerPort: 30002
+              - name : sbs-basestation
+                containerPort: 30003
+              - name : beast-in
+                containerPort: 30004
+              - name : beast-out
+                containerPort: 30005
+              - name : beast-in-alt
+                containerPort: 30104
+              volumeMounts:
+              - mountPath: /run/readsb
+                name: readsb-run
+                subPath: readsb
+              - mountPath: /run/autogain
+                name: readsb-run
+                subPath: autogain
+              - mountPath: /run/collectd
+                name: readsb-run
+                subPath: collectd-readsb
+              - mountPath: /dev/bus/
+                name: usb
+            volumes:
+            - name: readsb-run
+              persistentVolumeClaim:
+                claimName: readsb-run
+            - name: usb
+              hostPath:
+                path: /dev/bus/
+
+- name: Deploy readsb service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: readsb-beast
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ adsb_host }}"
+        selector:
+          app: readsb
+        ports:
+        - protocol: TCP
+          port: 30005
+          targetPort: 30005
+          name : beast
+        - protocol: TCP
+          port: 30105
+          targetPort: 30105
+          name : mlat
+        - protocol: TCP
+          port: 30001
+          targetPort: 30001
+          name : inbound 
+        - protocol: TCP
+          port: 80
+          targetPort: 8080
+          name : web
+        - protocol: TCP
+          port: 30002
+          targetPort: 30002
+          name : raw
+        - protocol: TCP
+          port: 30003
+          targetPort: 30003
+          name : sbs
+        type: LoadBalancer 

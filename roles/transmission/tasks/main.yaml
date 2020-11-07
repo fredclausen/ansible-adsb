@@ -1,0 +1,178 @@
+---
+- name: Deploy transmission PV Data
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: plex-data
+      spec:
+        capacity:
+          storage: 30Gi
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          server: "{{ nfs_share_ip }}"
+          path: "{{ transmission_data_path }}"
+
+- name: Deploy transmission PV Media
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: plex-media
+      spec:
+        capacity:
+          storage: 15T
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          server: "{{ nfs_share_ip }}"
+          path: "{{ transmission_media_path }}"
+
+- name: Deploy transmission PV Data
+  k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: plex-data
+        namespace: default
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 30Gi
+
+- name: Deploy transmission PVC Media
+  k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: plex-media
+        namespace: default
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 15T
+
+- name: Deploy transmission
+  k8s:
+    state: present
+    definition:
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: transmission
+          namespace: default
+          labels:
+            app: transmission
+        spec:
+          replicas: 1
+          strategy:
+            type: Recreate
+          selector:
+            matchLabels:
+              app: transmission
+          template:
+            metadata:
+              labels:
+                app: transmission
+            spec:
+              containers:
+              - name: transmission
+                image: "{{ transmission_image }}"
+                imagePullPolicy: Always
+                env:
+                - name: TZ
+                  value: "{{ timezone }}"
+                - name: PUID
+                  value: "1000"
+                - name: PGID
+                  value: "1000"
+                - name: USER
+                  value: "fred"
+                - name: PASS
+                  value: "{{ transmission_pass }}"
+                ports:
+                - name: trans-web
+                  containerPort: 9091
+                - name : torrent
+                  containerPort: 51413
+                - name : torrent-udp
+                  containerPort: 51413
+                  protocol: UDP
+                volumeMounts:
+                - mountPath: /downloads
+                  name: plex-media
+                  subPath: downloads
+                - mountPath: /config
+                  name: plex-data
+                  subPath: transmission
+                - mountPath: /watch
+                  name: plex-media
+                  subPath: watch
+              volumes:
+              - name: plex-data
+                persistentVolumeClaim:
+                  claimName: plex-data
+              - name: plex-media
+                persistentVolumeClaim:
+                  claimName: plex-media
+
+- name: Deploy transmission service UDP
+  k8s:
+    state: present
+    definition:
+        kind: Service
+        apiVersion: v1
+        metadata:
+          name: transmission-service
+          namespace: default
+          annotations:
+            metallb.universe.tf/allow-shared-ip: shared-ip
+        spec:
+          loadBalancerIP: "{{ transmission_ip }}"
+          selector:
+            app: transmission
+          ports:
+          - protocol: UDP
+            port: 51413
+            targetPort: 51413
+            name : torrent-udp
+          type: LoadBalancer
+
+- name: Deploy transmission service TCP
+  k8s:
+    state: present
+    definition:
+        kind: Service
+        apiVersion: v1
+        metadata:
+          name: transmission-web-service
+          namespace : default
+          annotations:
+            metallb.universe.tf/allow-shared-ip: shared-ip
+        spec:
+          loadBalancerIP: "{{ transmission_ip }}"
+          selector:
+            app: transmission
+          ports:
+          - protocol: TCP
+            port: 80
+            targetPort: 9091
+            name : transmission-web-service
+          - protocol: TCP
+            port: 51413
+            targetPort: 51413
+            name : torrent-tcp
+          type: LoadBalancer 

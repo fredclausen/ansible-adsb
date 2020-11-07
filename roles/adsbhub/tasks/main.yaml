@@ -1,0 +1,37 @@
+---
+- name: Deploy ADSB Hub
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: adsbhub
+        namespace: default
+        labels:
+          app: adsbhub
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: adsbhub
+        template:
+          metadata:
+            labels:
+              app: adsbhub
+          spec:
+            containers:
+            - name: adsbhub
+              image: "{{ adsbhub_image }}"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: SBSHOST
+                value: "{{ adsb_host }}"
+              - name: CLIENTKEY
+                value: "{{ adsbhub_clientkey }}"
+              - name: SBSPORT
+                value: "{{ sbsport }}"

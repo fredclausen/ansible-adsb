@@ -1,0 +1,9 @@
+---
+- hosts: nut-master
+  gather_facts: yes
+  become: yes
+  tasks:
+  - name: "Reboot nut-server"
+    service:
+      name: nut-server
+      state: restarted

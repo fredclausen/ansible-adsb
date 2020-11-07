@@ -1,0 +1,65 @@
+---
+- name: Deploy influxdb
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: influx
+        namespace: default
+        labels:
+          app: influx
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: influx
+        template:
+          metadata:
+            labels:
+              app: influx
+          spec:
+            containers:
+            - name: influx
+              image: "{{ influxdb_image }}"
+              imagePullPolicy: Always
+              ports:
+              - name : api
+                containerPort: 8086
+              - name: graphite
+                containerPort: 2003
+              volumeMounts:
+              - mountPath: /var/lib/influxdb
+                name: readsb-run
+                subPath: influxdb
+            volumes:
+            - name: readsb-run
+              persistentVolumeClaim:
+                claimName: readsb-run
+
+- name: Deploy influxdb service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: influx
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ influxdb_ip }}"
+        selector:
+          app: influx
+        ports:
+        - protocol: TCP
+          port: 8086
+          targetPort: 8086
+          name : api
+        - protocol: TCP
+          port: 2003
+          targetPort: 2003
+          name : graphite
+        type: LoadBalancer 

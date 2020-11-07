@@ -1,0 +1,21 @@
+---
+- name: Copy NUT Server Config
+  copy:
+    src: nut-client.conf
+    dest: /etc/nut/nut.conf
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+- name: Copy NUT Monitor Config
+  copy:
+    src: upsmon-client.conf
+    dest: /etc/nut/upsmon.conf
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+- name: restart NUT
+  service:
+    name: nut-client
+    state: restarted

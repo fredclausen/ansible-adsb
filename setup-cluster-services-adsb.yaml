@@ -1,0 +1,31 @@
+---
+## ansible-playbook -i inventory/inventory setup-cluster-services.yaml --extra-vars '{"flag":"apply -f"}' to apply/update configs
+## ansible-playbook -i inventory/inventory setup-cluster-services.yaml --extra-vars '{"flag":"delete -f"}' to delete configs
+
+- hosts: localhost
+  gather_facts: no
+  become: no
+  roles:
+    - role: metal-lb    
+    - role: readsb-proto
+      when: readsb_install == true
+    - role: dump978
+      when: dump978_install == true
+    - role: mlat
+      when: mlat_install == true
+    - role: piaware
+      when: piaware_install == true
+    - role: fr24
+      when: fr24_install == true
+    - role: opensky
+      when: opensky_install == true
+    - role: adsbx
+      when: adsbexchange_install == true
+    - role: planefinder
+      when: planefinder_install == true
+    - role: adsbhub
+      when: adsbhub_install == true
+    - role: tar1090
+      when: tar1090_install == true    
+    - role: influxdb
+      when: influxdb_install == true

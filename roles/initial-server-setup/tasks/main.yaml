@@ -1,0 +1,38 @@
+---
+- name: Update apt-cache and install all new packages
+  apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+- name: Install required packages for the system
+  apt:
+    pkg: 
+      - nfs-common
+      - net-tools
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+      - python3-pip
+      - nut
+      - rtl-sdr
+      - librtlsdr-dev
+    state: present
+- name: Install required python modules
+  pip:
+    name: docker
+    state: present
+- name: Set host-name for computer
+  hostname:
+    name: "{{new_hostname}}"
+- name: Copy Kernel blacklist
+  copy:
+    src: rtlsdr.conf
+    dest: /etc/modprobe.d/
+    owner: root
+    group: root
+    mode: '0644'
+    force: no
+- name: Reboot to apply kernel updates
+  reboot:

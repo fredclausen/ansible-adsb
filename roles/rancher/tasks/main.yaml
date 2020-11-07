@@ -1,0 +1,13 @@
+---
+- name: Pull and run the Rancher/server container
+  docker_container:
+      name: "rancher"
+      image: "{{ rancher_image }}"
+      state: started
+      privileged: yes
+      restart_policy: unless-stopped
+      detach: yes
+      published_ports:
+        - "8080:80"
+        - "8443:443"
+

@@ -1,0 +1,37 @@
+---
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Repository for ARM
+  apt_repository:
+    repo: "deb [arch=arm64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - ( ansible_facts.architecture is search("arm") or
+        ansible_facts.architecture is search("aarch64") )
+
+- name: Add Docker Repository for x84/AMD64
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - ( ansible_facts.architecture is search("x86_64") or
+        ansible_facts.architecture is search("amd64") )
+
+- name: Install docker
+  apt:
+    update_cache: yes
+    pkg: 
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+
+- name: Add ubuntu user to docker group
+  user:
+    name: ubuntu
+    group: docker

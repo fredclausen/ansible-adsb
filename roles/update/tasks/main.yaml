@@ -1,0 +1,88 @@
+---
+#- name: Update apt-cache and install all new packages
+#  apt:
+#    name: "*"
+#    state: latest
+#    update_cache: yes
+
+
+  # do an "apt-get update", to ensure latest package lists
+- name: apt-get update
+  apt:
+    update-cache: yes
+  changed_when: 0
+
+- name: Install required packages for the system
+  apt:
+    pkg: 
+     - nfs-common
+     - net-tools
+     - apt-transport-https
+     - ca-certificates
+     - curl
+     - gnupg-agent
+     - software-properties-common
+     - python3-pip
+     - nut
+     - rtl-sdr
+     - librtlsdr-dev
+    state: present
+
+  # get a list of packages that have updates
+- name: get list of pending upgrades
+  command: apt-get --simulate dist-upgrade
+  args:
+    warn: false # don't warn us about apt having its own plugin
+  register: apt_simulate
+  changed_when: 0
+
+# pick out list of pending updates from command output
+#- name: parse apt-get output to get list of changed packages
+#  set_fact:
+#    updates: '{{ apt_simulate.stdout_lines | select("match", "^Inst ") | list | splitpart(1, " ") | list | sort }}'
+#  changed_when: 0
+
+# tell user about packages being updated
+#- name: show pending updates
+#  debug:
+#    var: updates
+
+# if a new kernel is incoming, remove old ones to avoid full /boot
+- name: apt-get autoremove
+  command: apt-get -y autoremove
+  args:
+    warn: false
+  when: '"Inst linux-image-" in apt_simulate.stdout'
+  changed_when: 0
+
+# do the actual apt-get dist-upgrade
+- name: apt-get dist-upgrade
+  apt:
+    upgrade: dist # upgrade all packages to latest version
+  register: upgrade_output
+
+# check if we need a reboot
+- name: check if reboot needed
+  stat: path=/var/run/reboot-required
+  register: file_reboot_required
+
+# "meta: end_play" aborts the rest of the tasks in the current «tasks:»
+# section, for the current webserver
+# "when:" clause ensures that the "meta: end_play" only triggers if the
+# current webserver does _not_ need a reboot
+- meta: end_play
+  when: not file_reboot_required.stat.exists
+
+- name: reboot node
+  shell: sleep 2 && shutdown -r now "Reboot triggered by ansible"
+  async: 1
+  poll: 0
+  ignore_errors: true
+
+- name: Verify new update (optional)
+  command: uname -mrs
+  register: uname_result
+
+- name: Display new kernel version
+  debug:
+    var: uname_result.stdout_lines

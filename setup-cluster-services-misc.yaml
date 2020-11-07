@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  gather_facts: no
+  become: no
+
+  roles:
+    - role: cloudflared
+      when: cloudflared_install == true
+    - role: pihole
+      when: pihole_install == true
+    - role: guac
+      when: guac_install == true
+    - role: transmission
+      when: transmission_install == true

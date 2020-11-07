@@ -1,0 +1,98 @@
+---
+- name: label node with RTLSDR dongle for readsb
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Node
+      metadata:
+        labels:
+          dump1090: "usb"
+        name: "{{ dump1090_node }}"
+
+- name: Deploy dump978
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: dump978
+        namespace: default
+        labels:
+          app: dump978
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: dump978
+        template:
+          metadata:
+            labels:
+              app: dump978
+          spec:
+            nodeSelector:
+              dump1090: usb
+            containers:
+            - name: dump978
+              image: "{{ dump978_image }}"
+              imagePullPolicy: Always
+              securityContext:
+                privileged: true
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: DUMP978_RTLSDR_DEVICE
+                value: "{{ dump978_serial }}"
+              - name: DUMP978_SDR_PPM
+                value: "2"
+              - name: READSB_NET_ENABLE
+                value: "true"
+              - name: READSB_NET_BEAST_OUTPUT_PORT
+                value: "30105"
+              #- name: DUMP978_JSON_STDOUT
+              #  value: "false"
+              ports:
+              - name : beast-in-alt
+                containerPort: 30978
+              - name : beast-in-alt2
+                containerPort: 30979
+              - name : beast-in-alt3
+                containerPort: 37981
+              volumeMounts:
+              - mountPath: /dev/bus/
+                name: usb
+            volumes:
+            - name: usb
+              hostPath:
+                path: /dev/bus/
+                
+- name: Deploy dump978 service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: dump978
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ uat_host }}"
+        selector:
+          app: dump978
+        ports:
+        - protocol: TCP
+          port: 30978
+          targetPort: 30978
+          name : out
+        - protocol: TCP
+          port: 30979
+          targetPort: 30979
+          name : in
+        - protocol: TCP
+          port: 37981
+          targetPort: 37981
+          name : outraw
+        type: LoadBalancer

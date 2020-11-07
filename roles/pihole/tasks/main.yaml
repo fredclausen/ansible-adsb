@@ -1,0 +1,129 @@
+---
+- name: Deploy pihole pv
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: pihole
+      spec:
+        capacity:
+          storage: 5Gi
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          server: "{{ nfs_share_ip }}"
+          path: "{{ nfs_share_path }}"
+
+- name: Deploy pihole pvc
+  k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: pihole-etc
+        namespace: default
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 1Gi
+
+- name: Deploy pihole
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: pihole
+        namespace: default
+        labels:
+          app: pihole
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: pihole
+        template:
+          metadata:
+            labels:
+              app: pihole
+          spec:
+            containers:
+            - name: pihole
+              image: "{{ pihole_image }}"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: DNS1
+                value: "{{ pihole_dns }}"
+              - name: WEBPASSWORD
+                value: "{{ pihole_webpassword }}"
+              ports:
+              - name: web
+                containerPort: 80
+              - name : dns
+                protocol : UDP
+                containerPort: 53
+              volumeMounts:
+              - mountPath: /etc/pihole
+                name: pihole-etc
+                subPath: pihole
+              - mountPath: /etc/dnsmasq.d
+                name: pihole-etc
+                subPath: dnsmasqd
+            volumes:
+            - name: pihole-etc
+              persistentVolumeClaim:
+                claimName: pihole-etc
+
+- name: Deploy pihole service UDP
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: pihole-dns-service
+        namespace: default
+        annotations:
+          metallb.universe.tf/allow-shared-ip: shared-ip
+      spec:
+        loadBalancerIP: "{{ pihole_ip }}"
+        selector:
+          app: pihole
+        ports:
+        - protocol: UDP
+          port: 53
+          targetPort: 53
+          name : dns
+        type: LoadBalancer
+
+- name: Deploy pihole service TCP
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: pihole-web-service
+        namespace : default
+        annotations:
+          metallb.universe.tf/allow-shared-ip: shared-ip
+      spec:
+        loadBalancerIP: "{{ pihole_ip }}"
+        selector:
+          app: pihole
+        ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 80
+          name : web
+        type: LoadBalancer 

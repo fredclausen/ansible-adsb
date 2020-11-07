@@ -1,0 +1,13 @@
+---
+
+- hosts: localhost
+  gather_facts: no
+  become: no
+
+- name: Install Misc Services
+  import_playbook: setup-cluster-services-misc.yaml
+  when: install_misc_services == false
+
+- name: Install ADSB services
+  import_playbook: setup-cluster-services-adsb.yaml
+  when: install_adsb_services == true

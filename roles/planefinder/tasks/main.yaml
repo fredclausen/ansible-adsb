@@ -1,0 +1,64 @@
+---
+- name: Deploy planefinder
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: planefinder
+        namespace: default
+        labels:
+          app: planefinder
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: planefinder
+        template:
+          metadata:
+            labels:
+              app: planefinder
+          spec:
+            containers:
+            - name: planefinder
+              image: "{{ planefinder_image }}"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: BEASTHOST
+                value: "{{ adsb_host }}"
+              - name: SHARECODE
+                value: "{{ planefinder_sharecode }}"
+              - name: LAT
+                value: "{{ lat }}"
+              - name: LONG
+                value: "{{ lon }}"
+              ports:
+              - name: web
+                containerPort: 8754
+              - name: mlat
+                containerPort: 30053
+
+- name: Deploy planefinder service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: planefinder
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ planefinder_ip }}"
+        selector:
+          app: planefinder
+        ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 30053
+          name : beast
+        type: LoadBalancer 

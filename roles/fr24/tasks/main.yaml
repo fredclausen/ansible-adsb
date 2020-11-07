@@ -1,0 +1,66 @@
+---
+- name: Deploy FR24
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: fr24
+        namespace: default
+        labels:
+          app: fr24
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: fr24
+        template:
+          metadata:
+            labels:
+              app: fr24
+          spec:
+            containers:
+            - name: fr24
+              image: "{{ fr24_image}}"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: BEASTHOST
+                value: "{{ adsb_host }}"
+              - name: FR24KEY
+                value: "{{ fr24_key }}"
+              - name: MLAT
+                value: "yes"
+              ports:
+              - name: web
+                containerPort: 8754
+              - name: mlat
+                containerPort: 30003
+
+- name: Deploy FR24 service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: fr24-web
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ fr24_ip }}"
+        selector:
+          app: fr24
+        ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 80
+          name : web
+        - protocol: TCP
+          port: 30003
+          targetPort: 30003
+          name : beast
+        type: LoadBalancer 

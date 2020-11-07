@@ -1,0 +1,95 @@
+---
+- name: Deploy guac pv
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: guac
+      spec:
+        capacity:
+          storage: 5Gi
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          server: "{{ nfs_share_ip }}"
+          path: "{{ nfs_share_path }}"
+
+- name: Deploy guac pvc
+  k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: guac-run
+        namespace: default
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 5Gi
+
+- name: Deploy guac
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: guac
+        namespace: default
+        labels:
+          app: guac
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: guac
+        template:
+          metadata:
+            labels:
+              app: guac
+          spec:
+            containers:
+            - name: guac
+              image: "{{ guac_image }}"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              ports:
+              - name: web
+                containerPort: 8080
+              volumeMounts:
+              - mountPath: /config
+                name: guac
+                subPath: guac
+            volumes:
+            - name: guac
+              persistentVolumeClaim:
+                claimName: guac-run
+
+- name: Deploy guac service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: guac
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ guac_ip }}"
+        selector:
+          app: guac
+        ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 8080
+          name : web
+        type: LoadBalancer 

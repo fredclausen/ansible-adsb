@@ -1,0 +1,11 @@
+---
+- hosts: master
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: cluster-master-node
+- hosts: workers
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: cluster-worker-node

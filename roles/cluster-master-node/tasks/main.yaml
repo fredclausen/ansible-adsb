@@ -1,0 +1,14 @@
+---
+- name: Pull and run the Rancher/agent container
+  docker_container:
+      name: "rancher-agent"
+      image: "{{ rancher_agent }}"
+      state: started
+      restart_policy: unless-stopped
+      detach: yes
+      volumes:
+        - "/etc/kubernetes:/etc/kubernetes"
+        - "/var/run:/var/run"
+      network_mode: host
+      privileged: yes
+      command: "--server {{ rancher_server }} --token {{ rancher_token }} --ca-checksum {{ rancher_checksum }} --etcd --controlplane"

@@ -1,0 +1,70 @@
+---
+- name: Deploy MLAT
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: mlat
+        namespace: default
+        labels:
+          app: mlat
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: mlat
+        template:
+          metadata:
+            labels:
+              app: mlat
+          spec:
+            containers:
+            - name: mlat
+              image: "{{ mlat_image }}"
+              imagePullPolicy: Always
+              env:
+              - name: VERBOSE_LOGGING
+                value: "true"
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: READSB_FORWARD_MLAT
+                value: "true"
+              - name: READSB_NET_ENABLE
+                value: "true"
+              - name: DISABLE_WEBAPP
+                value: "true"
+              - name: DISABLE_PERFORMANCE_GRAPHS
+                value: "true"
+              - name: READSB_NET_ONLY
+                value: "true"
+              - name: READSB_NET_BEAST_OUTPUT_PORT
+                value: "30105"
+              - name: READSB_NET_CONNECTOR
+                value: "{{ mlat_net_connector }}"
+              ports:
+              - name : mlat
+                containerPort: 30105
+
+- name: Deploy MLAT service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: mlat-beast
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ mlat_host }}"
+        selector:
+          app: mlat
+        ports:
+        - protocol: TCP
+          port: 30105
+          targetPort: 30105
+          name : beast
+        type: LoadBalancer 

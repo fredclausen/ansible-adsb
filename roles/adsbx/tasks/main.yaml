@@ -1,0 +1,66 @@
+---
+- name: Deploy ADSB Exchange
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: adsbx
+        namespace: default
+        labels:
+          app: adsbx
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: adsbx
+        template:
+          metadata:
+            labels:
+              app: adsbx
+          spec:
+            containers:
+            - name: adsbx
+              image: "{{ adsbexchange_image }}"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: BEASTHOST
+                value: "{{ adsb_host }}"
+              - name: UUID
+                value: "{{ adsbexchange_uuid }}"
+              - name: LAT
+                value: "{{ lat }}"
+              - name: LONG
+                value: "{{ lon }}"
+              - name: ALT
+                value: "{{ alt_with_units }}"
+              - name: SITENAME
+                value: "{{ adsbexchange_site_name }}"
+              ports:
+              - name: mlat
+                containerPort: 30105
+
+- name: Deploy ADSB Exchange service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: adsbx
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ adsbexchange_ip }}"
+        selector:
+          app: adsbx
+        ports:
+        - protocol: TCP
+          port: 30105
+          targetPort: 30105
+          name : beast
+        type: LoadBalancer 
