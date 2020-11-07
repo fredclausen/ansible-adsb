@@ -84,3 +84,4 @@ $RECYCLE.BIN/
 group_vars/all.yaml
 test.yaml
 inventory/temp
+archive/
