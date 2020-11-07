@@ -1,7 +1,7 @@
 ---
 - name: Deploy ADSB Hub
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment

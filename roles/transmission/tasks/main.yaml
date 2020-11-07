@@ -1,7 +1,7 @@
 ---
 - name: Deploy transmission PV Data
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: v1
       kind: PersistentVolume
@@ -18,7 +18,7 @@
 
 - name: Deploy transmission PV Media
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: v1
       kind: PersistentVolume
@@ -35,7 +35,7 @@
 
 - name: Deploy transmission PV Data
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: PersistentVolumeClaim
       apiVersion: v1
@@ -51,7 +51,7 @@
 
 - name: Deploy transmission PVC Media
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: PersistentVolumeClaim
       apiVersion: v1
@@ -67,7 +67,7 @@
 
 - name: Deploy transmission
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
         apiVersion: apps/v1
         kind: Deployment
@@ -131,7 +131,7 @@
 
 - name: Deploy transmission service UDP
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
         kind: Service
         apiVersion: v1
@@ -153,7 +153,7 @@
 
 - name: Deploy transmission service TCP
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
         kind: Service
         apiVersion: v1

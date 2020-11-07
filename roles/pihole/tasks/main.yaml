@@ -1,7 +1,7 @@
 ---
 - name: Deploy pihole pv
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: v1
       kind: PersistentVolume
@@ -18,7 +18,7 @@
 
 - name: Deploy pihole pvc
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: PersistentVolumeClaim
       apiVersion: v1
@@ -34,7 +34,7 @@
 
 - name: Deploy pihole
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment
@@ -86,7 +86,7 @@
 
 - name: Deploy pihole service UDP
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1
@@ -108,7 +108,7 @@
 
 - name: Deploy pihole service TCP
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1

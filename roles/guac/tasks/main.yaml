@@ -1,7 +1,7 @@
 ---
 - name: Deploy guac pv
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: v1
       kind: PersistentVolume
@@ -18,7 +18,7 @@
 
 - name: Deploy guac pvc
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: PersistentVolumeClaim
       apiVersion: v1
@@ -34,7 +34,7 @@
 
 - name: Deploy guac
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment
@@ -76,7 +76,7 @@
 
 - name: Deploy guac service
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1

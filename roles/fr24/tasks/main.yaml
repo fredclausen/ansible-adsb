@@ -1,7 +1,7 @@
 ---
 - name: Deploy FR24
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment
@@ -43,7 +43,7 @@
 
 - name: Deploy FR24 service
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1

@@ -1,7 +1,7 @@
 ---
 - name: Deploy ADSB Exchange
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment
@@ -47,7 +47,7 @@
 
 - name: Deploy ADSB Exchange service
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1

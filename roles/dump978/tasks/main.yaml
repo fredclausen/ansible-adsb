@@ -1,7 +1,7 @@
 ---
 - name: label node with RTLSDR dongle for readsb
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: v1
       kind: Node
@@ -12,7 +12,7 @@
 
 - name: Deploy dump978
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment
@@ -71,7 +71,7 @@
                 
 - name: Deploy dump978 service
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1

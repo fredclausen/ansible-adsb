@@ -6,7 +6,6 @@
   gather_facts: no
   become: no
   roles:
-    - role: metal-lb    
     - role: readsb-proto
       when: readsb_install == true
     - role: dump978

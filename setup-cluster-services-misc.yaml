@@ -4,6 +4,7 @@
   become: no
 
   roles:
+    - role: metal-lb   
     - role: cloudflared
       when: cloudflared_install == true
     - role: pihole

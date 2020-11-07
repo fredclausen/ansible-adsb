@@ -1,7 +1,7 @@
 ---
 - name: Deploy tar1090
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment
@@ -51,7 +51,7 @@
 
 - name: Deploy tar1090 service
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1

@@ -1,7 +1,7 @@
 ---
 - name: Deploy MLAT
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment
@@ -51,7 +51,7 @@
 
 - name: Deploy MLAT service
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1

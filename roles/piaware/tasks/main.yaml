@@ -1,7 +1,7 @@
 ---
 - name: Deploy piaware
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment
@@ -49,7 +49,7 @@
 
 - name: Deploy piaware service
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1

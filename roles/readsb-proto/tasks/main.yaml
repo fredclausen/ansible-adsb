@@ -1,7 +1,7 @@
 ---
 - name: label node with RTLSDR dongle for readsb
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: v1
       kind: Node
@@ -12,7 +12,7 @@
 
 - name: Deploy readsb PV
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: v1
       kind: PersistentVolume
@@ -29,7 +29,7 @@
 
 - name: Deploy readsb PVC
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: PersistentVolumeClaim
       apiVersion: v1
@@ -45,7 +45,7 @@
 
 - name: Deploy readsb
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment
@@ -142,7 +142,7 @@
 
 - name: Deploy readsb service
   k8s:
-    state: present
+    state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1

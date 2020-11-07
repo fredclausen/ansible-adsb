@@ -7,7 +7,7 @@
   tasks:
   - name: Set workload facts
     set_fact:
-      workload_state: present
+      workload_state: absent
 
 - name: Install Misc Services
   import_playbook: setup-cluster-services-misc.yaml
