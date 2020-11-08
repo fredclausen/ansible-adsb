@@ -2,7 +2,7 @@
  
 This repository hosts [ansible](https://www.ansible.com) playbooks for deploying a full ADSB re-streaming site to various ADSB websites in to a [rancher](https://rancher.com) kubernetes cluster. Most of the focus is on deploying the workloads, however, there are included roles and playbooks for starting up the server nodes from scratch, deploying rancher, as well as a few useful and or fun workloads to deploy that aren't ADSB related.
 
-A special thank you to [mikenye](https://github.com/mikenye) for his fantastic ADSB docker images, because without them this project would not have even been worth trying. Additionally, a special thank you to [geerlingguy](https://github.com/geerlingguy) for his excellent [ansible for devops](https://github.com/geerlingguy/ansible-for-devops) youtube series and [turing pi](https://github.com/geerlingguy/turing-pi-cluster) series, from which I drew major inspiration to even try this.
+A special thank you to [mikenye](https://github.com/mikenye) for his fantastic ADSB docker images. Without them this project would not have even been possible. Additionally, a special thank you to [geerlingguy](https://github.com/geerlingguy) for his excellent [ansible for devops](https://github.com/geerlingguy/ansible-for-devops) youtube series and [turing pi](https://github.com/geerlingguy/turing-pi-cluster) series, from which I drew major inspiration to even try this.
 
 Tested and working on:
 
