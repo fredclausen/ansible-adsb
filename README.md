@@ -236,14 +236,14 @@ Please refer to the table below and set the values to match your installation ne
 
 |Variable Name | Description | Notes |
 | ------------ | ----------- | ----- |
-| nfs_share_ip | The NFS share ip address | The value is used in all workloads that have a need for persistent data retention |
-| nfs_share_path | The path on the NFS to the share | The value is used in all workloads that have a need for persistent data retention |
-| timezone | Timezone for the workloads | "TZ database name" format](<https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>). Use a `\\` in place of a single `\`|
-| lat | Latitude of the site | Decimal format |
-| lon | Longitude of the site | Decimal format |
-| alt_with_units | Altitude of the site | In feet, no units |
-| alt_without_units | Altitude of the site | In feet or meters, with "ft" or "m" respectively |
-| alt_meters | Altitude of the site | In meters, no units |
+| `nfs_share_ip` | The NFS share ip address | The value is used in all workloads that have a need for persistent data retention |
+| `nfs_share_path` | The path on the NFS to the share | The value is used in all workloads that have a need for persistent data retention |
+| `timezone | Timezone for the workloads | ["TZ database name" format](<https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>). Use a `\\` in place of a single `\`|
+| `lat` | Latitude of the site | Decimal format |
+| `lon` | Longitude of the site | Decimal format |
+| `alt_with_units` | Altitude of the site | In feet, no units |
+| `alt_without_units` | Altitude of the site | In feet or meters, with "ft" or "m" respectively |
+| `alt_meters` | Altitude of the site | In meters, no units |
 
 ### RTLSDR Dongle Setup
 
@@ -261,7 +261,28 @@ If you haven't already, time to plug in your RTLSDR dongles to whatever node(s) 
 
 ### readsb-proto Setup
 
-This workload is the meat and potatoes of the entire ADSB installation. It will provide 
+This workload is the meat and potatoes of the entire ADSB installation. It will provide map visualization of the targets seen (including, if set up MLAT and 978), statistics, as well as the feed that other containers can read from to feed out to various services.
+
+Please refer to the table below and set the values to match your installation needs.
+
+|Variable Name | Description | Notes |
+| ------------ | ----------- | ----- |
+| `readsb_install`  | Set to true to enable install, any other value to disable the install | None | 
+| `readsb_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image | See [readsb general options](https://github.com/mikenye/docker-readsb-protobuf#readsb-general-options) for valid options. You probably want rtlsdr |
+| `readsb_device_serial`  | Serial number of the RTLSDR device | None |
+| | `readsb_net_connector`  | Used to set the other container images providing MLAT or dump978 data | See [readsb network options](https://github.com/mikenye/docker-readsb-protobuf#readsb-network-options) for config options. If you aren't running either MLAT or dump978, remove all text between the quotes. If you are only using MLAT or dump978, remove the unused option |
+| `readsb_device_type` | Set to the type of radio being used | 
+| `adsb_host`    | The IP address of the workload | This value not only sets the `readsb-protobuf` IP, is used across many workloads so that they can connect and receive ADSB data |
+| `readsb_web_port` | The port used to access the `readsb-protobuf` web interface | None |
+|`readsb_rawin_port` | The port used to receive ADSB raw data | None |
+| `readsb_rawout_port` | The port used to expose ADSB raw data | None |
+| `readsb_sbs_port` | The port used to expose ADSB Base Station Data | None |
+| `readsb_sbs_text_port` | Same as above, but it is set between quotes | Ensure both `sbs` variables are the same number. This is done because of kubernetes/ansible formatting requirements |
+| `readsb_beastin_port` | The port used to receive ADSB Beast formatted data | None |
+| `readsb_beastout_port` | The port used to expose ADSB Beast formatted data | None |
+| `readsb_beastout_text_port` | | Same as above, but it is set between quotes | Ensure both `beastout` variables are the same number. This is done because of kubernetes/ansible formatting requirements |
+| `readsb_beastin_other_port` | An alternative port for ADSB Beast formatted data | None |
+| `readsb_influxsb_url` | If you intend to write ADSB data to influx db, leave this value set. If you won't be using influx db, remove the text between the quotes | See [InfluxDB setup](#influxdb-setup) |
 
 ### ADSB Hub Setup
 
