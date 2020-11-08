@@ -6,12 +6,13 @@ A special thank you to [mikenye](https://github.com/mikenye) for his fantastic A
 
 Tested and working on:
 
-* `aarch64` (`arm64v8`) platform (Raspberry Pi 4/3B+) and ubuntu arm64 OS 20.04 LTS
+* `aarch64` (`arm64v8`) platform (Raspberry Pi 4) and ubuntu arm64 OS 20.04 LTS
 
 Should work on:
 
 * `x86_64` (`amd64`) platform running non-apt based systems, but will require modification to the playbooks.
 * `armv7l` (`arm32v7`) platform (Raspberry Pi 3B+) running 32 bit raspian or ubuntu 32 bit arm os (NOT with rancher!)
+* `armv7l` (`arm32v7`) platform (Raspberry Pi 3B+) running 64 bit raspian or ubuntu 64 bit arm os (NOT with rancher!)
 
 
 If you are installing this on to an ARM based cluster and you do not have 64 bit OS installed you won't be able to use this guide's Cluster Setup and playbooks. Rancher requires ARM64; however, all of the cluster workloads should run on ARM32.
@@ -53,6 +54,11 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
     * [Plane Finder Setup](#plane-finder-setup)
     * [tar1090 Setup](#tar1090-setup)
     * [Install the workloads](#install-the-workloads)
+   * [Misc](#misc)
+    * [Updating the Workloads](#updating-the-workloads)
+    * [Deleting Workloads](#deleting-the-workloads)
+    * [Updating the Server](#updating-the-server)
+    * [The node I am running readsb/dump978 on died. Now what?](#the-node-i-am-running-readsb-dump978-on-died-now-what)
 
 ## Future Expansion Of This Guide
 
@@ -104,9 +110,9 @@ Download this repository or git clone to your local system to get started.
 
 * You need to know the serial number of your RTLSDR dongles.
 
-These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you don't have a cluster installed, we'll cover how to use this repository's files to set up rancher but keep in mind rancher cannot run on ARM32, and it is basically unusuably on Pi3B+ even if running a 64bit ARM distro due to the limits of the 3B+ hardware. k3s should be your choice if you do not have at a minimum Pi4s.
+These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you don't have a cluster installed, we'll cover how to use this repository's files to set up rancher but keep in mind rancher cannot run on ARM32, and it is basically unusuable on Pi3B+ even if running a 64bit ARM distro due to the limits of the 3B+ hardware. k3s should be your choice if you do not have at a minimum Pi4s with 4gb of RAM for the master node.
 
-If you have a working cluster that can accessed using a local instance of kubectl, and ansible installed, head on down to [ADSB Workload Setup](#adsb-workload-setup). If not, read on!
+If you have a working cluster that can accessed using a local instance of kubectl, as well as ansible installed, head on down to [ADSB Workload Setup](#adsb-workload-setup). If not, read on!
 
 #### Installing Ansible
 
@@ -118,17 +124,17 @@ Head on over to [kubernete's site](https://kubernetes.io/docs/tasks/tools/instal
 
 #### Flashing the OS
 
-For ARM based systems that can run ARM64 (Pi3B+ and Pi4) I STRONGLY recommend ARM64 based operating systems such as [ubuntu's ARM64 server](https://ubuntu.com/download/server/arm).
+For ARM based systems that can run ARM64 (Pi3B+ and Pi4) I STRONGLY recommend ARM64 based operating systems such as [ubuntu's ARM64 server](https://ubuntu.com/download/server/arm). 64bit is absolutely required for a Rancher RKE cluster, but in general is a good choice even if you aren't using Rancher RKE.
 
-To flash the image on to an SD card, see the [other tools](https://www.raspberrypi.org/documentation/installation/installing-images/) at that link. Balena Etcher is great and very easy.
+To flash the image on to an SD card, see the [other tools](https://www.raspberrypi.org/documentation/installation/installing-images/) at that link for guidance. Balena Etcher is great and very easy.
 
 For other architectures follow the install guide for your distribution of linux. Server distros are strongly recommended.
 
 #### Getting the Node IPs
 
-Now its time to start some configuration. Plug in your Pi's SD cards, power on your VMs, or otherwise turn on your nodes and ensure they are connected to your network.
+Now its time to start some configuration. Plug in your Pi's SD cards and power, power on your VMs, or otherwise turn on your nodes and ensure they are connected to your network.
 
-Google around if you need help, but generally, you can look in your router's web interface for the most basic way of getting the IPs of all of the nodes.
+We need to know the IPs of the nodes. Google around if you need help, but generally, you can look in your router's web interface for the most basic way of getting the IPs of all of the nodes.
 
 Please, ensure at a bare minimum the node you intend to be the `master node` has a static IP assigned. I recommend all of the nodes have static IPs but it isn't strictly speaking necessary.
 
@@ -136,17 +142,17 @@ Now we need to configure the `inventory/inventory` file.
 
 There are four sections here.
 
-`[master]` is the section that will tell ansible what node(s) will be the master node(s). Please input the IP address of the node(s). The playbooks you will run will set the host-name of each of the nodes via the `new_hostname` variable on the same line as the IP address of the node. You can see the format I've used, and while it is not requisite to change the default value I have provided, you can. The name just has to be unique for each node on the cluster.
+* `[master]` is the section that will tell ansible what node(s) will be the master node(s). Please input the IP address of the node(s). The playbooks you will run will set the host name of each of the nodes via the `new_hostname` variable on the same line as the IP address of the node. You can see the format I've used, and while it is not requisite to change the default value I have provided, you can. The name just has to be unique for each node on the cluster. With rancher you can have multiple master nodes; if you are not running Rancher I'd suggest having a single master node unless you are familiar with configuring your cluster to work with multiple masters.
 
-`[workers]` is the exact same formatting as master above, except that these are the nodes you intend to run as the worker(s).
+* `[workers]` is the exact same formatting as master above, except that these are the nodes you intend to run as the worker(s).
 
-`[rancher]` is the node that the rancher management interface will be installed on. It should a master node, and only one of the master nodes if you have more than one.
+* `[rancher]` is the node that the rancher management interface will be installed on. It should be a master node, and only one of the master nodes if you have more than one.
 
-`[nut-master]` and `[nut-slave]` are a list of all of the nodes you want to run the nut UPS management stuff on. Set the IP address of the node that has the UPS plugged in to it under `[nut-master]`, and all of the nodes you intend to monitor the UPS under `[nut-slave]`.
+* `[nut-master]` and `[nut-slave]` are a list of all of the nodes you want to run the nut UPS management stuff on. Set the IP address of the node that has the UPS plugged in to it under `[nut-master]`, and all of the nodes you intend to monitor the UPS under `[nut-slave]`.
 
-If you do not have a UPS, or do not wish to configure it, delete all of the IPs under both headers.
+* If you do not have a UPS, or do not wish to configure it, delete all of the IPs under both headers.
 
-The config files that will be copied to the nodes in command we will run below. Modify the nut config files for the nut-server and nut-slave under roles/nut-(master/slave)/files to suit your configuration.
+The config files will be copied to the server when we set up the nodes. Modify the nut config files for the nut-server and nut-slave under roles/nut-(master/slave)/files to suit your configuration.
 
 
 #### Update the OS and Install Packages
@@ -173,15 +179,17 @@ At this point, you should have your nodes all prepared. Let us configure the clu
 
 Open your web browser and open it up to `https://your rancher ip you set above:8443`. Go through the initial setup which should all be self explanatory. Default username and password are both `admin`.
 
-The first thing we need to do is set up a new cluster. Click `Add Cluster`. If you do not see an `Add Cluster` button at the top right, click global at the very top of the screen. On the next screen, click `Existing Nodes`
+The first thing we need to do is set up a new cluster. 
+
+* Click `Add Cluster`. If you do not see an `Add Cluster` button at the top right, click global at the very top of the screen. On the next screen, click `Existing Nodes`
 
 We need to change a few configuration options here. 
 
 * Give your cluster a name under `Cluster Name`.
 
-* Under `Kubenetes Options` change `Network Provider` to `Flannel`.
+* Under `Kubenetes Options` change `Network Provider` to `Flannel`. You might be fine to use other options, but with a Pi4 based cluster I found `Flannel` to be the only one that appeared to work.
 
-* Under `Advanced Options` change `Nginx Ingress` to `Disabled`.
+* Under `Advanced Options` change `Nginx Ingress` to `Disabled`. We are doing this because we will be using metallb as the load balancer to provide the ingress in to the cluster and assign IPs to the cluster workloads.
 
 * Click `Next`
 
@@ -209,7 +217,7 @@ And brew yourself a nice coffee. This will take a very long time. You may see so
 
 ### Get your kubectl Config
 
-We need to get the kubectl config file so we can issue commands to the cluster. 
+We need to get the kubectl config file so we can issue commands to the cluster from your computer. 
 
 * Head to your rancher web interface and click `Cluster` at the top. 
 
@@ -229,9 +237,11 @@ If you get no errors, congratulations, you have a cluster and can issue commands
 
 Before we go on to setting everything up, it is time to have a think about what workloads you want to deploy. At a bare minimum you will need readsb-proto. It isn't required to set up anything else; with that said, feeding the various ADSB websites is pretty cool and some even give you some minor perks for doing so, so why not? We'll go over configuring each workload below.
 
+I have provided a IPs.txt file that includes the default IPs set for each workload. As you go through the configuration below, I suggest listing the IPs in that file for each workload so that you have a list of them all in one place.
+
 ### Conventions Used In all.yaml
 
-* To keep the documentation clean, in this section if you are told to change a variable, the variable is located in `group_vars/all.yaml`.
+* In this section if you are told to change a variable, the variable is located in `group_vars/all.yaml`.
 
 * Variables are used to configure the workloads to suit your setup. I have provided sane defaults that should require minimal configuration. If you need more advanced configuration than the variables provided give (not every enviornment variable is set, for instance) look at the `roles/workloadname/tasks/main.yaml` file.
 
@@ -239,7 +249,9 @@ Before we go on to setting everything up, it is time to have a think about what 
 
 * To enable the installation of a workload, ensure `workload_install` is set to  `true`
 
-* The layout may appear messy (and I would LOVE feedback on how to make it better), but there is a method to the madness I chose. I have gloabl/server configuration at the top, followed by gloabl values that apply to all workloads, followed by IPs for the workloads, followed by port mapping, credentials for the workloads, and finally, the workload configurations. The idea with splitting up the sections this way is each section might reference variable names from the previous section to configure certain items, and I wanted a value to be set once (such as the IP address or port mapping for a workload) and any workload that needs to know about that IP address or port mapping can just use the variable name.
+* The layout may appear messy (and I would LOVE feedback on how to make it better), but there is a method to the madness I chose. I have gloabl/server configuration at the top, followed by global values that apply to all workloads, followed by IPs for the workloads, followed by port mapping, credentials for the workloads, and finally, the workload configurations. The idea with splitting up the sections this way is each section might reference variable names from the previous section to configure certain items, and I wanted a value to be set once (such as the IP address or port mapping for a workload) and any workload that needs to know about that IP address or port mapping can just use the variable name.
+
+* All of the workloads in the default all.yaml config have the default ports set in the variables; the only exception is if any workload has a web interface that is not on port 80. If the web interface is default to a non port 80 port, I have mapped those back to port 80. This configuration works as long as each workload gets a unique IP. There is no reason I can see that you will have to change these ports, but they are configurable.
 
 ### MetalLB Setup
 
@@ -265,7 +277,9 @@ Please refer to the table below and set the values to match your installation ne
 
 ### RTLSDR Dongle Setup
 
-If you haven't already, time to plug in your RTLSDR dongles to whatever node(s) you feel like, taking care to note which node you did plug the RTL. If you have both a 1090mhz and a 978mhz dongle it is possible to plug both dongles in to the same node, but they MUST have different serial numbers. If they are the same serial number (default `00000000`) that is fine, but they MUST be plugged in to different nodes.
+If you haven't already, time to plug in your RTLSDR dongles to whatever node(s) you feel like, taking care to note which node you did plug the RTLSDR in to. If you have both a 1090mhz and a 978mhz dongle it is possible to plug both dongles in to the same node, but they MUST have different serial numbers. See [this post](https://discussions.flightaware.com/t/how-to-serialize-dongles-for-es1090-uat978/48147) for changing the serial number of the device, ignoring step 1.1 because I have already installed rtl-sdr on to the nodes. 
+
+If they are the same serial number (default `00000000`) that is fine, but they MUST be plugged in to different nodes.
 
 * Update the the variables for the RTLSDR configuration.
     - 1090mhz dongle
@@ -458,3 +472,13 @@ And that really is it. I'll cover below some extra stuff related to the cluster,
 Happy ADSB-ing!
 
 ![tar1090 amp](images/map-busy.png)
+
+## Misc
+
+### Updating the workloads
+
+### Deleting workloads
+
+### Updating the server
+
+### The node I am running readsb/dump978 on died. Now what?
