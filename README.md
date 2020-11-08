@@ -17,6 +17,7 @@ Should work on:
 
 * [fredclausen/ansible-adsb](#ansible-adsb)
   * [Table of Contents](#table-of-contents)
+  * [Future expansion of this guide](#future-expansion-of-this-guide)
   * [Workloads](#workloads)
     * [ADSB](#adsb)
     * [Fun or Useful](#fun-or-useful)
@@ -34,6 +35,13 @@ Should work on:
   * [ADSB Workload Setup](#adsb-workload-setup)
     * [MetalLB Setup](#metallb-setup)
     * [RTLSDR Dongle Setup](#rtlsdr-dongle-setup)
+
+## Future Expansion Of This Guide
+
+It is my goal to have this repository cover installing these docker images on any number of configurations and not just a rancher cluster. As such, this guide will eventually expand to cover the following install methods
+
+* Docker
+* k3s
 
 ## Workloads
 
