@@ -35,6 +35,7 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
     * [Rancher setup](#rancher-setup)
     * [Configure the new cluster](#configure-the-new-cluster)
     * [Provision the new cluster](#provision-the-new-cluster)
+    * [Get your kuectl Config](#get-your-kubectl-config)
   * [ADSB Workload Setup](#adsb-workload-setup)
     * [Convenstions used in all.yaml](#conventions-used-in-all-yaml)
     * [MetalLB Setup](#metallb-setup)
@@ -98,11 +99,11 @@ Download this repository or git clone to your local system to get started.
 
 * Re-name `group_vars/all.template.yaml` to `group_vars/all.yaml`
 
-* You will need a NFS share to save the persistent data of the workloads. If you are familiar with kubernetes storaging and want change this around, be my guest. However, by providing the playbooks a NFS share it will automatically set up the cluster storage correctly. Edit `group_vars/all.yaml` and change `nfs_share_ip` and `nfs_share_path` to your NFS share. Save the file.
+* You will need a NFS share to save the persistent data of the workloads. If you are familiar with kubernetes storaging and want to change this around, be my guest. However, by providing the playbooks a NFS share it will automatically set up the cluster storage correctly.
 
 * You need to know the serial number of your RTLSDR dongles.
 
-These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you don't have a cluster installed, we'll cover how to use this repository's files to set up rancher but keep in mind rancher cannot run on ARM32, and it is basically unusuably on Pi3B+ due to the limits of the 3B+ hardware. k3s should be your choice if you do not have at a minimum Pi4s.
+These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you don't have a cluster installed, we'll cover how to use this repository's files to set up rancher but keep in mind rancher cannot run on ARM32, and it is basically unusuably on Pi3B+ even if running a 64bit ARM distro due to the limits of the 3B+ hardware. k3s should be your choice if you do not have at a minimum Pi4s.
 
 If you have a working cluster that can accessed using a local instance of kubectl, and ansible installed, head on down to [ADSB Workload Setup](#adsb-workload-setup). If not, read on!
 
@@ -167,7 +168,7 @@ And sit back and wait. Depending on the age of the operating system you installe
 
 At this point, you should have your nodes all prepared. Let us configure the cluster.
 
-## Configure t6he New Cluster
+## Configure the New Cluster
 
 Open your web browser and open it up to `https://your rancher ip you set above:8443`. Go through the initial setup which should all be self explanatory. Default username and password are both `admin`.
 
@@ -205,7 +206,23 @@ And brew yourself a nice coffee. This will take a very long time. You may see so
 
 ![cluster nodes](images/node-provision.png)
 
-Congratulations, you have a cluster! Let's get to the fun stuff.
+### Get your kubectl Config
+
+We need to get the kubectl config file so we can issue commands to the cluster. 
+
+* Head to your rancher web interface and click `Cluster` at the top. 
+
+* You should see a button on the top right that says `Kubeconfig file`. Click that.
+
+* Save the text that comes up to  `~/.kube/config` on Mac or Linux systems. See [this site](https://forum.wise-paas.advantech.com/-12/faq-how-to-set-up-kubeconfig-on-windows) for information on what to do for windows systems.
+
+* Lastly, to test that this all works issue the following command in your terminal window
+
+```
+kubectl get pods
+```
+
+If you get no errors, congratulations, you have a cluster! Let's get to the fun stuff.
 
 ## ADSB Workload Setup
 
@@ -286,6 +303,13 @@ Please refer to the table below and set the values to match your installation ne
 
 ### ADSB Hub Setup
 
+This workload feeds data to [ADSB Hub](https://www.adsbhub.org).
+
+|Variable Name | Description | Notes |
+| ------------ | ----------- | ----- |
+| `adsbhub_install`  | Set to true to enable install, any other value to disable the install | None | 
+| `adsbhub_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
+| `adsbhub_clientkey`  | The client key to identify your site | See [adsbhub](https://github.com/mikenye/docker-adsbhub) for ADSB Hub web setup instructions if this is your first time running ADSB Hub |
 
 ### ADSB Exchange Setup
 
