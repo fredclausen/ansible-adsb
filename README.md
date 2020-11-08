@@ -18,7 +18,7 @@ Should work on:
 * [fredclausen/ansible-adsb](#ansible-adsb)
   * [Table of Contents](#table-of-contents)
   * [Workloads](#workloads)
-    * [ADSB] (#adsb)
+    * [ADSB](#adsb)
     * [Fun or Useful](#fun-or-useful)
   * [Prerequisites](#prerequisites)
     * [Initial server setup](#initial-server-setup)
@@ -45,7 +45,8 @@ Below is a list of workloads that can be deployed in to the cluster. Each worklo
     | [readsb-proto-buf](https://github.com/mikenye/docker-readsb-protobuf) | RTLSDR Decoder / Statistics collection / Statistics Visualization / Map visualization of targets |
     | [tar1090](https://github.com/mikenye/docker-tar1090) | Map visualization of targets |
 
-   Fun or Useful
+## Fun or Useful
+
       | Workload | Type |
       | ---------|------|
       | cloudflared | DNS encryption |
