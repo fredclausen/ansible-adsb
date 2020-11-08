@@ -24,7 +24,7 @@
           spec:
             containers:
             - name: mlat
-              image: "{{ mlat_image }}"
+              image: "{{ readsb_image }}"
               imagePullPolicy: Always
               env:
               - name: VERBOSE_LOGGING

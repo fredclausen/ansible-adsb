@@ -189,7 +189,7 @@ Congratulations, you have a cluster! Let's get to the fun stuff.
 
 ## ADSB Workload Setup
 
-Before we go on to setting everything up, it is time to have a think about what workloads you want to deploy. At a bare minimum, you will need readsb-proto. It isn't required to set up anything else; with that said, feeding the various ADSB websites is pretty cool and some even give you some minor perks for doing so, so why not? We'll go over configuring each workload below, but for any workload you do not want, change `workloadname_install` value to `false` and the workload will not be installed.
+Before we go on to setting everything up, it is time to have a think about what workloads you want to deploy. At a bare minimum you will need readsb-proto. It isn't required to set up anything else; with that said, feeding the various ADSB websites is pretty cool and some even give you some minor perks for doing so, so why not? We'll go over configuring each workload below, but for any workload you do not want, change `workloadname_install` value to `false` and the workload will not be installed.
 
 Also, to keep the documentation clean, in this section if you are told to change a variable, the variable is located in `group_vars/all.yaml`.
 

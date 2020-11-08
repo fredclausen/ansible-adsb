@@ -176,7 +176,7 @@ mlat_net_connector: "{{ piaware_ip }},{{ piaware_mlat }},beast_in;{{ adsbexchang
 # readsb
 
 readsb_install: true
-readsb_image: "mikenye/readsb-protobuf:beta"
+readsb_image: "mikenye/readsb-protobuf"
 readsb_device_type: "rtlsdr"
 readsb_serial: "00000111"
 # mlat and 978 host IPs
