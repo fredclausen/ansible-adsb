@@ -52,6 +52,7 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
     * [PiAware Setup](#piaware-setup)
     * [Plane Finder Setup](#plane-finder-setup)
     * [tar1090 Setup](#tar1090-setup)
+    * [Install the workloads](#install-the-workloads)
 
 ## Future Expansion Of This Guide
 
@@ -439,3 +440,21 @@ This workload provides an impoved map visualization of the ADSB data from readsb
 | `tar1090_ip`  | Set the IP of the workload | None |
 
 This workload exposes a web interface at `tar1090_ip:tar1090_web_port`
+
+### Install the Workloads
+
+We have one more setting to take a look at. Most likely, unless you want to set up the Misc workloads (not covered in this guide), ensure `install_misc_services` is set to false and `install_misc_services` is set to true.
+
+And now, let us install the workloads. Issue the following command in your terminal.
+
+```
+ansible-playbook -i inventory/inventory setup-cluster-services.yaml
+```
+
+And sit back. It should not take too much time to run through the play book, and we you are done, look at the workload logs in Rancher, paying attention to making sure none of the workloads are in an unstarted state (generally related to architecture issues of the docker image; I've done my best to mitigate that) and that readsb and the feeders have connected to their services with no issues.
+
+And that really is it. I'll cover below some extra stuff related to the cluster, such as maintence and removing workloads, but you are all done for now!
+
+Happy ADSB-ing
+
+![tar1090 amp](images/map.png)

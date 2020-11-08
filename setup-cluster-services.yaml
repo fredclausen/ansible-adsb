@@ -8,7 +8,9 @@
   - name: Set workload facts
     set_fact:
       workload_state: present
-
+  roles:
+    - role: metal-lb  
+    
 - name: Install Misc Services
   import_playbook: setup-cluster-services-misc.yaml
   when: install_misc_services == true
