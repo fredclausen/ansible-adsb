@@ -30,6 +30,7 @@ Should work on:
     * [Rancher setup](#rancher-setup)
   * [Cluster Setup](#cluster-setup)
     * [Configure the new cluster](#configure-the-new-cluster)
+    * [Provision the new cluster](#provision-the-new-cluster)
   * [ADSB Workload Setup](#adsb-workload-setup)
 
 ## Workloads
@@ -144,7 +145,9 @@ We need to change a few configuration options here.
 
 * Under `Advanced Options` change `Nginx Ingress` to `Disabled`.
 
-* On the next screen we have some values we need to save to `group_vars/all.yaml`.
+* Click `Next`
+
+On the next screen we have some values we need to save to `group_vars/all.yaml`.
 
 * Copy the value after `--token` to the `rancher_token` variable.
 
@@ -154,6 +157,16 @@ We need to change a few configuration options here.
 
 * Save all.yaml.
 
-Click `Next`
+### Provision The New Cluster
+
+Return to your terminal window and execute the following command
+
+```
+ansible-playbook -i inventory/inventory setup-pods-master.yaml
+```
+
+And brew yourself a nice coffee. This will take a very long time. What you are waiting to see is in the Rancher management interface your cluster get fully provisioned. You can watch this by clicking `Nodes` at the top of the screen and waiting for your screen to not show any errors. It will look something like this.
+
+![cluster nodes](images/node-provision.png)
 
 ## ADSB Workload Setup
