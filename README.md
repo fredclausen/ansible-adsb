@@ -457,4 +457,4 @@ And that really is it. I'll cover below some extra stuff related to the cluster,
 
 Happy ADSB-ing!
 
-![tar1090 amp](images/map.png)
+![tar1090 amp](images/map-busy.png)
