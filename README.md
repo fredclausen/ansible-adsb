@@ -6,7 +6,7 @@ A special thank you to [mikenye](https://github.com/mikenye) for his fantastic A
 
 Tested and working on:
 
-* `aarch64` (`arm64v8`) platform (Raspberry Pi 4/3B+) and ubuntu arm64 OS 20.04
+* `aarch64` (`arm64v8`) platform (Raspberry Pi 4/3B+) and ubuntu arm64 OS 20.04 LTS
 
 Should work on:
 
@@ -22,6 +22,10 @@ Should work on:
     * [Fun or Useful](#fun-or-useful)
   * [Prerequisites](#prerequisites)
     * [Initial server setup](#initial-server-setup)
+      * [Installing Ansible](#installing-ansible)
+      * [Installing kubectl](#installing-kubectl)
+      * [Flashing the OS](#flashing-the-os)
+      * [Getting your node IPs](#getting-node-ips)
     * [Rancher setup](#rancher-setup)
   * [Cluster Setup](#cluster-setup)
   * [ADSB Workload Setup](#adsb-workload-setup)
@@ -57,9 +61,53 @@ Below is a list of workloads that can be deployed in to the cluster. Each worklo
 
 ## Prerequisites
 
-These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you have a working cluster that can accessed using a local instance of kubectl, head on down to [ADSB Workload Setup](#adsb-workload-setup). If not, read on!
+Download this repository or git clone to your local system to get started.
 
+Re-name `group_vars/all.template.yaml` to `group_vars/all.yaml`
 
+These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you don't have a cluster installed, we'll cover how to use this repository's files to set up rancher (and eventually, when I test it out, k3s too!) but keep in mind rancher cannot run on ARM32, and it is basically unusuably on Pi3B+ due to the limits of the 3B+ hardware. k3s should be your choice if you do not have at a minimum Pi4s.
+
+If you have a working cluster that can accessed using a local instance of kubectl, and ansible installed, head on down to [ADSB Workload Setup](#adsb-workload-setup). If not, read on!
+
+#### Installing Ansible
+
+Head on over to [ansible's documentation](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) to find directions on installing ansible for your system. Note, this needs to be installed on your computer, not on any of the nodes you will be setting up for the cluster!
+
+#### Installing kubectl
+
+Head on over to [kubernete's site](https://kubernetes.io/docs/tasks/tools/install-kubectl/) for directions on installing kubectl for your system. Note, this needs to be installed on your computer, not on any of the nodes you will be setting up for the cluster!
+
+#### Flashing the OS
+
+For ARM based systems that can run ARM64 (Pi3B+ and Pi4) I STRONGLY recommend ARM64 based operating systems such as [ubuntu's ARM64 server](https://ubuntu.com/download/server/arm).
+
+To flash the image on to an SD card, see the [other tools](https://www.raspberrypi.org/documentation/installation/installing-images/) at that link. Balena Etcher is great and very easy.
+
+For other architectures follow the install guide for your distribution of linux. Server distros are strongly recommended.
+
+#### Getting the node IPs
+
+Now its time to start some configuration. Plug in your Pi's SD cards, power on your VMs, or otherwise turn on your nodes and ensure they are connected to your network.
+
+Google around if you need help, but generally, you can look in your router's web interface for the most basic way of getting the IPs of all of the nodes.
+
+Please, ensure at a bare minimum the node you intend to be the `master node` has a static IP assigned. I recommend all of the nodes have static IPs but it isn't strictly speaking necessary.
+
+Now we need to configure the `inventory/inventory` file.
+
+There are four sections here.
+
+`[master]` is the section that will tell ansible what node(s) will be the master node(s). Please input the IP address of the node(s). The playbooks you will run will set the host-name of each of the nodes via the `new_hostname` variable on the same line as the IP address of the node. You can see the format I've used, and while it is not requisite to change the default value I have provided, you can. The name just has to be unique for each node on the cluster.
+
+`[workers]` is the exact same formatting as master above, except that these are the nodes you intend to run as the worker(s).
+
+`[rancher]` is the node that the rancher management interface will be installed on. It should a master node, and only one of the master nodes if you have more than one.
+
+`[nut-master]` and `[nut-slave]` are a list of all of the nodes you want to run the nut UPS management stuff on. Set the IP address of the node that has the UPS plugged in to it under `[nut-master]`, and all of the nodes you intend to monitor the UPS under `[nut-slave]`.
+
+If you do not have a UPS, or do not wish to configure it, delete all of the IPs under both headers.
+
+The config files that will be copied to the nodes in command we will run below. Modify the nut config files for the nut-server and nut-slave under roles/nut-(master/slave)/files to suit your configuration.
 
 ## Cluster Setup
 
