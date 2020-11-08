@@ -35,7 +35,7 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
     * [Rancher setup](#rancher-setup)
     * [Configure the new cluster](#configure-the-new-cluster)
     * [Provision the new cluster](#provision-the-new-cluster)
-    * [Get your kuectl Config](#get-your-kubectl-config)
+    * [Get your kubectl Config](#get-your-kubectl-config)
   * [ADSB Workload Setup](#adsb-workload-setup)
     * [Convenstions used in all.yaml](#conventions-used-in-all-yaml)
     * [MetalLB Setup](#metallb-setup)
@@ -350,7 +350,7 @@ This workload feeds data to [FlightRadar24](https://www.flightradar24.com).
 | `fr24_install`  | Set to true to enable install, any other value to disable the install | None | 
 | `fr24_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
 | `fr24_mlat_enable`  | Enable MLAT with FR24 service | None |
-| `fr24_key`  | The site site from FR24 for your site | See [flightradar24](https://github.com/mikenye/docker-flightradar24) for setup instructions |
+| `fr24_key`  | The site key from FR24 for your site | See [flightradar24](https://github.com/mikenye/docker-flightradar24) for setup instructions |
 | `fr24_web_port`  | Web interface for the workload | None |
 | `fr24_base_port`  | Port to expose SBS formatted data | None |
 | `fr24_raw_port`  | Port to expose raw ADSB data | None |
@@ -359,6 +359,14 @@ This workload feeds data to [FlightRadar24](https://www.flightradar24.com).
 This workload has a web interface that can be accessed at `fr24_ip:fr24_web_port`
 
 ### influxdb Setup
+
+The workload provides an influxdb instance that readsb-protobuf can write ADSB data to. This workload is very much optional.
+
+|Variable Name | Description | Notes |
+| ------------ | ----------- | ----- |
+| `influxdb_install`  | Set to true to enable install, any other value to disable the install | Most installs will want this workload disabled | 
+| `influxdb_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
+| `influxdb_ip` | Set the IP of the workload | None |
 
 ### MLAT Setup
 
