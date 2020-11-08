@@ -32,28 +32,28 @@ Below is a list of workloads that can be deployed in to the cluster. Each worklo
 
 ### ADSB
 
-    | Workload | Type |
-    | ---------|------|
-    | [asbdexchange](https://github.com/mikenye/docker-adsbexchange) | Feeder |
-    | [adsbhub](https://github.com/mikenye/docker-adsbhub) | Feeder |
-    | [dump978](https://github.com/mikenye/docker-dump978) | RTLSDR Decoder |
-    | [fr24/flightradar24](https://github.com/mikenye/docker-flightradar24) | Feeder |
-    | [influxdb](https://hub.docker.com/_/influxdb) | Database |
-    | [mlat](https://github.com/mikenye/docker-readsb-protobuf) | Local data aggregator |
-    | [opensky](https://github.com/mikenye/docker-opensky-network) | Feeder |
-    | [plane finder](https://github.com/mikenye/docker-planefinder) | Feeder |
-    | [readsb-proto-buf](https://github.com/mikenye/docker-readsb-protobuf) | RTLSDR Decoder / Statistics collection / Statistics Visualization / Map visualization of targets |
-    | [tar1090](https://github.com/mikenye/docker-tar1090) | Map visualization of targets |
+| Workload | Type |
+| ---------|------|
+| [asbdexchange](https://github.com/mikenye/docker-adsbexchange) | Feeder |
+| [adsbhub](https://github.com/mikenye/docker-adsbhub) | Feeder |
+| [dump978](https://github.com/mikenye/docker-dump978) | RTLSDR Decoder |
+| [fr24/flightradar24](https://github.com/mikenye/docker-flightradar24) | Feeder |
+| [influxdb](https://hub.docker.com/_/influxdb) | Database |
+| [mlat](https://github.com/mikenye/docker-readsb-protobuf) | Local data aggregator |
+| [opensky](https://github.com/mikenye/docker-opensky-network) | Feeder |
+| [plane finder](https://github.com/mikenye/docker-planefinder) | Feeder |
+| [readsb-proto-buf](https://github.com/mikenye/docker-readsb-protobuf) | RTLSDR Decoder / Statistics collection / Statistics Visualization / Map visualization of targets |
+| [tar1090](https://github.com/mikenye/docker-tar1090) | Map visualization of targets |
 
 ## Fun or Useful
 
-      | Workload | Type |
-      | ---------|------|
-      | cloudflared | DNS encryption |
-      | pihole | DNS ad filtering |
-      | guac | Server management interfaces (SSH, remote desktop, etc) |
-      | nut | UPS management for cluster notes |
-      | transmission | torrent client |
+| Workload | Type |
+| ---------|------|
+| cloudflared | DNS encryption |
+| pihole | DNS ad filtering |
+| guac | Server management interfaces (SSH, remote desktop, etc) |
+| nut | UPS management for cluster notes |
+| transmission | torrent client |
 
 ## Prerequisites
 
