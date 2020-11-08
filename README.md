@@ -455,6 +455,6 @@ And sit back. It should not take too much time to run through the play book, and
 
 And that really is it. I'll cover below some extra stuff related to the cluster, such as maintence and removing workloads, but you are all done for now!
 
-Happy ADSB-ing
+Happy ADSB-ing!
 
 ![tar1090 amp](images/map.png)
