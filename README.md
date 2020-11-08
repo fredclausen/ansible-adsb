@@ -32,6 +32,7 @@ Should work on:
     * [Configure the new cluster](#configure-the-new-cluster)
     * [Provision the new cluster](#provision-the-new-cluster)
   * [ADSB Workload Setup](#adsb-workload-setup)
+    * [RTLSDR Dongle Setup](#rtlsdr-dongle-setup)
 
 ## Workloads
 
@@ -69,6 +70,8 @@ Download this repository or git clone to your local system to get started.
 * Re-name `group_vars/all.template.yaml` to `group_vars/all.yaml`
 
 * You will need a NFS share to save the persistent data of the workloads. Edit `group_vars/all.yaml` and change `nfs_share_ip` and `nfs_share_path` to your NFS share. Save the file.
+
+* You need to know the serial number of your RTLSDR dongles.
 
 These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you don't have a cluster installed, we'll cover how to use this repository's files to set up rancher (and eventually, when I test it out, k3s too!) but keep in mind rancher cannot run on ARM32, and it is basically unusuably on Pi3B+ due to the limits of the 3B+ hardware. k3s should be your choice if you do not have at a minimum Pi4s.
 
@@ -174,3 +177,25 @@ And brew yourself a nice coffee. This will take a very long time. You may see so
 Congratulations, you have a cluster! Let's get to the fun stuff.
 
 ## ADSB Workload Setup
+
+### RTLSDR Dongles
+
+If you haven't already, time to plug in your RTLSDR dongles to whatever node(s) you feel like, taking care to note which node you did plug the RTL. If you have both a 1090mhz and a 978mhz dongle it is possible to plug both dongles in to the same node, but they MUST have different serial numbers. If they are the same serial number (default `00000000`) that is fine, but they MUST be plugged in to different nodes.
+
+* Update the `group_vars/all.yaml` with the hostname of the node that has the dongle plugged in.
+
+** 1090mhz dongle
+
+*** change `readsb_serial` to the serial number of the dongle.
+
+*** change `readsb_node` to the host name of the node you have the dongle plugged in to.
+
+*** change `adsb_host` to the IP address of the node you have the dongle plugged in to.
+
+** 978mhz dongle if present
+
+*** change `readsb_serial` to the serial number of the dongle
+
+*** change `readsb_node` to the host name of the node you have the dongle plugged in to
+
+*** change `dump1090_node` to the IP address of the node you have the dongle plugged in to.
