@@ -182,20 +182,20 @@ Congratulations, you have a cluster! Let's get to the fun stuff.
 
 If you haven't already, time to plug in your RTLSDR dongles to whatever node(s) you feel like, taking care to note which node you did plug the RTL. If you have both a 1090mhz and a 978mhz dongle it is possible to plug both dongles in to the same node, but they MUST have different serial numbers. If they are the same serial number (default `00000000`) that is fine, but they MUST be plugged in to different nodes.
 
-* Update the `group_vars/all.yaml` with the hostname of the node that has the dongle plugged in.
+    * Update the `group_vars/all.yaml` with the hostname of the node that has the dongle plugged in.
 
-- 1090mhz dongle
+        - 1090mhz dongle
 
-+ change `readsb_serial` to the serial number of the dongle.
+            + change `readsb_serial` to the serial number of the dongle.
 
-+ change `readsb_node` to the host name of the node you have the dongle plugged in to.
+            + change `readsb_node` to the host name of the node you have the dongle plugged in to.
 
-_ change `adsb_host` to the IP address of the node you have the dongle plugged in to.
+            + change `adsb_host` to the IP address of the node you have the dongle plugged in to.
 
-- 978mhz dongle if present
+        - 978mhz dongle if present
 
-+ change `readsb_serial` to the serial number of the dongle
+            + change `readsb_serial` to the serial number of the dongle
 
-+ change `readsb_node` to the host name of the node you have the dongle plugged in to
+            + change `readsb_node` to the host name of the node you have the dongle plugged in to
 
-+ change `dump1090_node` to the IP address of the node you have the dongle plugged in to.
+            + change `dump1090_node` to the IP address of the node you have the dongle plugged in to.
