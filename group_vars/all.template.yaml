@@ -24,7 +24,7 @@ readsb_node: cluster-worker05
 dump1090_node: cluster-worker05
 
 #metal-lb version to install
-metallb_version: v0.9.4
+metallb_version: v0.9.5
 
 # All persistent data is stored on a NFS share
 # IP and path on the NFS share for workloads
@@ -45,43 +45,100 @@ nfs_share_path: "/volume1/cluster"
 # Values for ALL workloads
 
 timezone: "America\\Denver" # Time zone
-adsb_host: "192.168.31.212" # host running readsb
-uat_host: "192.168.31.219"
-mlat_host: "192.168.31.218"
-sbsport: "30003"
 # site latitude/longitude
-lat: "35.00000"
-lon: "-106.00000"
+lat: "35.18808"
+lon: "-106.56953"
 # site altitude
 # some containers need the altitude without units
 alt_with_units: "5299ft"
 alt_without_units: "5299" # in feet
 alt_meters: "1615"
 
+## workload IPs
+cloudflared_ip: "192.168.31.213"
+guac_ip: "192.168.31.208"
+pihole_ip: "192.168.31.210"
+transmission_ip: "192.168.31.211"
+
+adsb_host: "192.168.31.212" # host running readsb
+uat_host: "192.168.31.219"
+mlat_host: "192.168.31.218"
+adsbexchange_ip: "192.168.31.220"
+fr24_ip: "192.168.31.216"
+influxdb_ip: "192.168.31.221"
+piaware_ip: "192.168.31.217"
+planefinder_ip: "192.168.31.222"
+tar1090_ip: "192.168.31.214"
+
+# workload secrets
+
+adsbhub_clientkey: |
+                  {% raw %}
+                  "secret"
+                  {% endraw %}
+adsbexchange_uuid: "secret"
+adsbexchange_site_name: "secret"
+opensky_serial: "secret"
+opensky_username: "secret"
+fr24_key: "secret"
+planefinder_sharecode: ""secret"
+piaware_feeder_id: "secret"
+
+# workload ports
+# for some reason EVs require the port to be set as text.
+# Any that do require that are set in quotes. Ensure same as none text variable
+
+adsbexchange_mlat_port: 30105
+dump978_rawuat_port: 30978
+dump978_json_port: 30979
+dump978_rawout_port: 37981
+fr24_web_port: 80
+fr24_base_port: 30003
+fr24_raw_port: 30334
+mlat_outport: 30105
+mlat_outport_text: "30105"
+piaware_web: 80
+piaware_basestation: 30003
+piaware_beastout: 30005
+piaware_mlat: 30105
+piaware_uatraw: 30978
+piaware_uatjson: 30979
+planefinder_web_port: 80
+planefinder_echo_port: 30054
+readsb_web: 80
+readsb_rawin: 30001
+readsb_rawout: 30002
+readsb_sbs: 30003
+readsb_sbs_text: "30003" 
+readsb_beastin: 30004
+readsb_beastout: 30005
+readsb_beastout_text: "30005"
+readsb_beastin_other: 30104
+tar1090_web: 80
+
 ##-------NON ADSB-------##
 
 # cloudflared
 
 cloudflared_install: true
-cloudflared_ip: "192.168.31.213"
+
 cloudflared_image: "crazymax/cloudflared"
 
 # guacamole
 
 guac_install: true
 guac_image: "oznu/guacamole:armhf"
-guac_ip: "192.168.31.208"
+
 
 pihole_install: true
 pihole_image: "pihole/pihole"
 pihole_dns: "192.168.31.212#5353"
-pihole_webpassword: "secret"
-pihole_ip: "192.168.31.210"
+pihole_webpassword: "PropilotFred"
 
 transmission_install: true
 transmission_image: "linuxserver/transmission"
-transmission_pass: "secret"
-transmission_ip: "192.168.31.211"
+transmission_pass: "Propilot11!!"
+
 transmission_data_path: "/volume1/Cluster-Plex"
 transmission_media_path: "/volume1/Media"
 
@@ -98,7 +155,7 @@ metallb_config: |
 # if you do, look in to generating the secret key manually
 metallb_secretkey: |
                   {% raw %}
-                  secret
+                  Y25TMG5qNWMzYm1VeERheDJTVjM1aVlybWVzblpEZ1BKVDQ1L3BPc2JDRXdaSHZ1Nkg4VVB6eEtSdStacVNuawpWUXBkZzRoL00xaW9GRW1kWWRQYTg3cUYyQ0RDS0RaUHZJamhDL0Z6MTZZYVd2clhMSGQ5Q1lmRWEreEZLalE2CmdvbGFkcWtiOVJ5b01CbHpNeHQ1dW8yZDBSelRUc09JampXc3QyenRiNTA9
                   {% endraw %}
 
 ##-------ADSB Master Workloads--------## 
@@ -112,9 +169,9 @@ dump978_serial: "00001000"
 # mlat
 mlat_install: true
 mlat_image: "mikenye/readsb-protobuf:beta"
-# set each IP address of containers that provide MLAT. Currently FR24, piaware, adsbx do.
+# set each IP address of containers that provide MLAT. Currently piaware, adsbx do.
 # remove any unused feeders
-mlat_net_connector: "192.168.31.216,30003,beast_in;192.168.31.217,30104,beast_in;192.168.31.220,30105,beast_in"
+mlat_net_connector: "{{ piaware_ip }},{{ piaware_mlat }},beast_in;{{ adsbexchange_ip }},{{ adsbexchange_mlat_port }},beast_in"
 
 # readsb
 
@@ -123,63 +180,47 @@ readsb_image: "mikenye/readsb-protobuf:beta"
 readsb_device_type: "rtlsdr"
 readsb_serial: "00000111"
 # mlat and 978 host IPs
-readsb_net_connector: "192.168.31.218,30105,beast_in;192.168.31.219,37981,raw_in"
+readsb_net_connector: "{{ mlat_host }},{{ mlat_outport }},beast_in;{{ uat_host }},{{ dump978_rawuat_port }},raw_in"
 
 ##-------ADSB Feeder and Misc Workloads--------##
 
 ## ADSB Hub
 
 adsbhub_install: true
-adsbhub_clientkey: |
-                  {% raw %}
-                  secret
-                  {% endraw %}
 adsbhub_image: "mikenye/adsbhub"
 
 # ADSB Exchange
 
 adsbexchange_install: true
-adsbexchange_uuid: "secret"
-adsbexchange_site_name: "Fred-House"
 adsbexchange_image: "mikenye/adsbexchange"
-adsbexchange_ip: "192.168.31.220"
 
 # Flight Radar 24
 
 fr24_install: true
 fr24_image: "mikenye/fr24feed:1.0.25-3_armhf_arm64"
-fr24_key: "secret"
-fr24_ip: "192.168.31.216"
+fr24_mlat_enable: "yes"
 
 # influx db
 
 influxdb_install: true
 influxdb_image: "docker.io/influxdb"
-influxdb_ip: "192.168.31.221"
 
 # opensky
 
 opensky_install: true
 opensky_image: "mikenye/opensky-network"
-opensky_serial: "secret"
-opensky_username: "secret"
 
 # piaware/flight aware
 
 piaware_install: true
 piaware_image: "mikenye/piaware:uat_support_preview"
-piaware_feeder_id: "secret"
-piaware_ip: "192.168.31.217"
 
 # plane finder
 
 planefinder_install: true
 planefinder_image: "mikenye/planefinder"
-planefinder_sharecode: "secret"
-planefinder_ip: "192.168.31.222"
 
 # tar10190
 
 tar1090_install: true
 tar1090_image: "mikenye/tar1090"
-tar1090_ip: "192.168.31.214"
