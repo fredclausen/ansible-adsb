@@ -222,7 +222,7 @@ We need to get the kubectl config file so we can issue commands to the cluster.
 kubectl get pods
 ```
 
-If you get no errors, congratulations, you have a cluster! Let's get to the fun stuff.
+If you get no errors, congratulations, you have a cluster and can issue commands to it! Let's get to the fun stuff.
 
 ## ADSB Workload Setup
 
@@ -287,7 +287,7 @@ Please refer to the table below and set the values to match your installation ne
 | `readsb_install`  | Set to true to enable install, any other value to disable the install | None | 
 | `readsb_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
 | `readsb_device_type`  | Sets the radio device type | See [readsb general options](https://github.com/mikenye/docker-readsb-protobuf#readsb-general-options) for valid options. You probably want rtlsdr |
-| `readsb_device_serial`  | Serial number of the RTLSDR device | None |
+| `readsb_serial`  | Serial number of the RTLSDR device | None |
 | `readsb_net_connector`  | Used to set the other container images providing MLAT or dump978 data | See [readsb network options](https://github.com/mikenye/docker-readsb-protobuf#readsb-network-options) for config options. If you aren't running either MLAT or dump978, remove all text between the quotes. If you are only using MLAT or dump978, remove the unused option |
 | `adsb_host`    | The IP address of the workload | This value not only sets the `readsb-protobuf` IP, it is used across many workloads so that they can connect and receive ADSB data |
 | `readsb_web_port` | The port used to access the `readsb-protobuf` web interface | None |
@@ -322,8 +322,20 @@ This workload feeds data to [ADSB Exchange](https://www.adsbexchange.com) as wel
 | `adsbexchange_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
 | `adsbexchange_uuid`  | The UUID provided by ADSB Exchange to identify your site | See [asbdexchange](https://github.com/mikenye/docker-adsbexchange) for setup instructions to get the UUID if you don't already have one |
 | `adsbexchange_site_name`  | Your site name | None |
+| `adsbexchange_mlat_port` | The port to expose MLAT data | None |
 
 ### dump978 Setup
+
+This workload provides 978mhz UAT/ADS-R radar to readsb-protobuf and piaware. 
+
+|Variable Name | Description | Notes |
+| ------------ | ----------- | ----- |
+| `dump978_install`  | Set to true to enable install, any other value to disable the install | Most installs will want this workload disabled | 
+| `dump978_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
+| `dump978_serial`  | Serial number of the RTLSDR device | None |
+| `dump978_rawuat_port`  | Port to expose raw UAT data | For now, leave as default |
+| `dump978_json_port`  | Port to expose UAT data as JSON | None |
+| `dump978_rawout_port`  | Port to expose raw UAT data | For now, leave as default |
 
 ### FlightRadar24 Setup
 
