@@ -514,9 +514,9 @@ Issue the following command in a terminal window to update the server.
 ansible-playbook -i inventory/inventory update-installed-packages.yaml
 ```
 
-### The node I am running readsb/dump978 on died. Now what?
+### The Node I am Running readsb/dump978 On Died. Now what?
 
-One limiting factor we have in our cluster is that the dongles for the RTLSDR (or whatever hardware device you are using to provide the ADSB data) can be plugged in to only one node. If that node dies for any reason (I mean, Micro SD cards are relatively frail for storage) we lose ADSB data. Obviously, we want to quickly be able to recover from that, which we can.
+One limiting factor we have in our cluster is that the dongles for the RTLSDR (or whatever hardware device you are using to provide the ADSB data) can be plugged in to only one node. If that node dies for any reason (I mean, Micro SD cards are relatively frail for storage) we lose ADSB data and none of the feeders can do their job, map visualizations are gone, and your performance charts will look sad. Obviously, we want to quickly be able to recover from that, which we can.
 
 One note, I am going to address readsb in this section, but this also applies to dump978 as well. Just replace `readsb` with `dump978` and carry on.
 
@@ -537,3 +537,16 @@ ansible-playbook -i inventory/inventory set-new-usb-tags.yaml
 And your readsb workload should come back up on the new node.
 
 ### Adding In Extra Nodes to the Cluster
+
+So, you like your cluster but want more....clustery goodness? I'm with you.
+
+Adding nodes is super easy! Create a temporary inventory file with either `[master]` or `[worker]` section in it, and follow the formatting convention in the main inventory file as discussed in [Getting your node IPs](#getting-node-ips) with the new IP address(es) of the new nodes.
+
+Issue the following commands to provision the new node:
+
+```
+ansible-playbook -i path-to-temp-inventory-file setup-servers.yaml
+ansible-playbook -i path-to-temp-inventory-file setup-pods-master.yaml
+```
+
+And you should be good. Enjoy your extra clusteryness.
