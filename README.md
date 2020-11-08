@@ -38,7 +38,9 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
   * [ADSB Workload Setup](#adsb-workload-setup)
     * [Convenstions used in all.yaml](#conventions-used-in-all-yaml)
     * [MetalLB Setup](#metallb-setup)
+    * [Values For All Workloads](#values-for-all-workloads)
     * [RTLSDR Dongle Setup](#rtlsdr-dongle-setup)
+    * [readsb-proto Setup](#readsb-proto-setup)
     * [ADSB Hub Setup](#adsb-hub-setup)
     * [ADSB Exchange Setup](#adsb-exchange-setup)
     * [dump978 Setup](#dump978-setup)
@@ -48,7 +50,6 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
     * [OpenSky Setup](#opensky-setup)
     * [PiAware Setup](#piaware-setup)
     * [Plane Finder Setup](#plane-finder-setup)
-    * [readsb-proto Setup](#readsb-proto-setup)
     * [tar1090 Setup](#tar1090-setup)
 
 ## Future Expansion Of This Guide
@@ -208,11 +209,19 @@ Congratulations, you have a cluster! Let's get to the fun stuff.
 
 ## ADSB Workload Setup
 
-Before we go on to setting everything up, it is time to have a think about what workloads you want to deploy. At a bare minimum you will need readsb-proto. It isn't required to set up anything else; with that said, feeding the various ADSB websites is pretty cool and some even give you some minor perks for doing so, so why not? We'll go over configuring each workload below, but for any workload you do not want, change `workloadname_install` value to `false` and the workload will not be installed.
-
-To keep the documentation clean, in this section if you are told to change a variable, the variable is located in `group_vars/all.yaml`.
+Before we go on to setting everything up, it is time to have a think about what workloads you want to deploy. At a bare minimum you will need readsb-proto. It isn't required to set up anything else; with that said, feeding the various ADSB websites is pretty cool and some even give you some minor perks for doing so, so why not? We'll go over configuring each workload below.
 
 ### Conventions Used In all.yaml
+
+* To keep the documentation clean, in this section if you are told to change a variable, the variable is located in `group_vars/all.yaml`.
+
+* Variables are used to configure the workloads to suit your setup. I have provided sane defaults that should require minimal configuration. If you need more advanced configuration that the variables provided give (not every enviornment variable is set, for instance) look at the `roles/workloadname/tasks/main.yaml` file.
+
+* Variables for a workload start with the name of the workload followed by an underscore
+
+* To enable the installation of a workload, ensure `workload_install` is set to  `true`
+
+* The layout may appear messy (and I would LOVE feedback on how to make it better), but there is a method to the madness I chose. I have gloabl/server configuration at the top, followed by gloabl values that apply to all workloads, followed by IPs for the workloads, followed by port mapping, credentials for the workloads, and finally, the workload configurations. The idea with splitting up the sections this way is each section might reference variable names from the previous section to configure certain items, and I wanted a value to be set once (such as the IP address or port mapping for a workload) and any workload that needs to know about that IP address or port mapping can just use the variable name.
 
 ### MetalLB Setup
 
@@ -220,6 +229,21 @@ We are using MetalLB to provide the ingress controller to the cluster, so we nee
 
 * Update the `metallb_config` variable to the correct IP range for your network. You will need a range of roughly 15 IP addresses to give yourself breathing room.
 * Update your router's DHCP IP range to exclude those IP addresses so they do not get handed out to any clients.
+
+### Values For All Workloads
+
+Please refer to the table below and set the values to match your installation needs. Unless noted, all of these values need to be set, as they apply to all or most workloads.
+
+|Variable Name | Description | Notes |
+| ------------ | ----------- | ----- |
+| nfs_share_ip | The NFS share ip address | The value is used in all workloads that have a need for persistent data retention |
+| nfs_share_path | The path on the NFS to the share | The value is used in all workloads that have a need for persistent data retention |
+| timezone | Timezone for the workloads | "TZ database name" format](<https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>). Use a `\\` in place of a single `\`|
+| lat | Latitude of the site | Decimal format |
+| lon | Longitude of the site | Decimal format |
+| alt_with_units | Altitude of the site | In feet, no units |
+| alt_without_units | Altitude of the site | In feet or meters, with "ft" or "m" respectively |
+| alt_meters | Altitude of the site | In meters, no units |
 
 ### RTLSDR Dongle Setup
 
@@ -234,6 +258,10 @@ If you haven't already, time to plug in your RTLSDR dongles to whatever node(s) 
         + change `readsb_serial` to the serial number of the dongle
         + change `uat_host` to the host name of the node you have the dongle plugged in to.
         + change `dump1090_node` to the IP address of the node you have the dongle plugged in to.
+
+### readsb-proto Setup
+
+This workload is the meat and potatoes of the entire ADSB installation. It will provide 
 
 ### ADSB Hub Setup
 
@@ -252,7 +280,5 @@ If you haven't already, time to plug in your RTLSDR dongles to whatever node(s) 
 ### piaware Setup
 
 ### Plane Finder Setup
-
-### readsb-proto Setup
 
 ### tar1090 Setup
