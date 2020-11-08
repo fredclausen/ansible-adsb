@@ -32,6 +32,7 @@ Should work on:
     * [Configure the new cluster](#configure-the-new-cluster)
     * [Provision the new cluster](#provision-the-new-cluster)
   * [ADSB Workload Setup](#adsb-workload-setup)
+    * [MetalLB Setup](#metallb-setup)
     * [RTLSDR Dongle Setup](#rtlsdr-dongle-setup)
 
 ## Workloads
@@ -178,16 +179,27 @@ Congratulations, you have a cluster! Let's get to the fun stuff.
 
 ## ADSB Workload Setup
 
+Before we go on to setting everything up, it is time to have a think about what workloads you want to deploy. At a bare minimum, you will need readsb-proto. It isn't required to set up anything else; with that said, feeding the various ADSB websites is pretty cool and some even give you some minor perks for doing so, so why not? We'll go over configuring each workload below, but for any workload you do not want, change `workloadname_install` value to `false` and the workload will not be installed.
+
+Also, to keep the documentation clean, in this section if you are told to change a variable, the variable is located in `group_vars/all.yaml`.
+
+### MetalLB Setup
+
+We are using MetalLB to provide the ingress controller to the cluster, so we need to adjust one simple setting to make it work.
+
+* Update the `metallb_config` variable to the correct IP range for your network. You will need a range of roughly 15 IP addresses to give yourself breathing room.
+* Update your router's DHCP IP range to exclude those IP addresses so they do not get handed out to any clients.
+
 ### RTLSDR Dongle Setup
 
 If you haven't already, time to plug in your RTLSDR dongles to whatever node(s) you feel like, taking care to note which node you did plug the RTL. If you have both a 1090mhz and a 978mhz dongle it is possible to plug both dongles in to the same node, but they MUST have different serial numbers. If they are the same serial number (default `00000000`) that is fine, but they MUST be plugged in to different nodes.
 
-* Update the `group_vars/all.yaml` with the hostname of the node that has the dongle plugged in.
+* Update the the variables for the RTLSDR configuration.
     - 1090mhz dongle
         + change `readsb_serial` to the serial number of the dongle.
-        + change `readsb_node` to the host name of the node you have the dongle plugged in to.
         + change `adsb_host` to the IP address of the node you have the dongle plugged in to.
+        + change `readsb_node` to the host name of the node you have the dongle plugged in to.
     - 978mhz dongle if present
         + change `readsb_serial` to the serial number of the dongle
-        + change `readsb_node` to the host name of the node you have the dongle plugged in to
+        + change `uat_host` to the host name of the node you have the dongle plugged in to.
         + change `dump1090_node` to the IP address of the node you have the dongle plugged in to.
