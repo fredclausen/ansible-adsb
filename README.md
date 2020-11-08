@@ -25,6 +25,6 @@ Should work on:
 Below is a list of workloads that can be deployed in to the cluster. Each workload can be individually turned off if you decide you don't want to install it in to the cluster via the `group_vars/all.yaml` file. This will be discussed further in the [config](#config) section.
 
 * ADSB
-  * | Workload | Type |
+    | Workload | Type |
     | [asbdexchange](https://github.com/mikenye/docker-adsbexchange) | Feeder |
     | [adsbhub](https://github.com/mikenye/docker-adsbhub) | Feeder |
