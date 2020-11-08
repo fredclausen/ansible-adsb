@@ -40,8 +40,10 @@ Should work on:
 
 It is my goal to have this repository cover installing these docker images on any number of configurations and not just a rancher cluster. As such, this guide will eventually expand to cover the following install methods
 
-* Docker
+* Docker with no cluster
 * k3s
+
+As well as other aviation related workloads like streaming ATC communication, etc.
 
 ## Workloads
 
