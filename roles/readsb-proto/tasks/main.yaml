@@ -155,27 +155,31 @@
           app: readsb
         ports:
         - protocol: TCP
-          port: 30005
-          targetPort: 30005
-          name : beast
-        - protocol: TCP
-          port: 30105
-          targetPort: 30105
-          name : mlat
-        - protocol: TCP
-          port: 30001
-          targetPort: 30001
-          name : inbound 
-        - protocol: TCP
-          port: 80
+          port: "{{ readsb_web }}"
           targetPort: 8080
           name : web
         - protocol: TCP
-          port: 30002
-          targetPort: 30002
-          name : raw
+          port: "{{ readsb_rawin }}"
+          targetPort: 30001
+          name : rawin
         - protocol: TCP
-          port: 30003
+          port: "{{ readsb_rawout }}"
+          targetPort: 30002
+          name : rawout
+        - protocol: TCP
+          port: "{{ readsb_sbs }}"
           targetPort: 30003
-          name : sbs
+          name: sbs
+        - protocol: TCP
+          port: "{{ readsb_beastin }}"
+          targetPort: 30004
+          name: beastin
+        - protocol: TCP
+          port: "{{ readsb_beastout }}"
+          targetPort: 30005
+          name : beatout
+        - protocol: TCP
+          port: "{{ readsb_beastin_other }}"
+          targetPort: 30104
+          name : beastinother
         type: LoadBalancer 

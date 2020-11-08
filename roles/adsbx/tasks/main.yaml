@@ -60,7 +60,7 @@
           app: adsbx
         ports:
         - protocol: TCP
-          port: 30105
+          port: "{{ adsbexchange_mlat_port }}"
           targetPort: 30105
           name : beast
         type: LoadBalancer 

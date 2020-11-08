@@ -48,18 +48,12 @@
                 value: "{{ dump978_serial }}"
               - name: DUMP978_SDR_PPM
                 value: "2"
-              - name: READSB_NET_ENABLE
-                value: "true"
-              - name: READSB_NET_BEAST_OUTPUT_PORT
-                value: "30105"
-              #- name: DUMP978_JSON_STDOUT
-              #  value: "false"
               ports:
-              - name : beast-in-alt
+              - name : raw-uat
                 containerPort: 30978
-              - name : beast-in-alt2
+              - name : json
                 containerPort: 30979
-              - name : beast-in-alt3
+              - name : raw-out
                 containerPort: 37981
               volumeMounts:
               - mountPath: /dev/bus/
@@ -84,15 +78,15 @@
           app: dump978
         ports:
         - protocol: TCP
-          port: 30978
+          port: "{{ dump978_rawuat_port }}"
           targetPort: 30978
-          name : out
+          name : raw-uat
         - protocol: TCP
-          port: 30979
+          port: "{{ dump978_json_port }}"
           targetPort: 30979
-          name : in
+          name : json
         - protocol: TCP
-          port: 37981
+          port: "{{ dump978_rawout_port }}"
           targetPort: 37981
-          name : outraw
+          name : rawout
         type: LoadBalancer

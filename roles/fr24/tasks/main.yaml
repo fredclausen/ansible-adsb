@@ -34,12 +34,14 @@
               - name: FR24KEY
                 value: "{{ fr24_key }}"
               - name: MLAT
-                value: "yes"
+                value: "{{ fr24_mlat_enable }}"
               ports:
               - name: web
                 containerPort: 8754
-              - name: mlat
+              - name: base-out
                 containerPort: 30003
+              - name: raw-out
+                containerPort: 30334
 
 - name: Deploy FR24 service
   k8s:
@@ -56,11 +58,15 @@
           app: fr24
         ports:
         - protocol: TCP
-          port: 80
-          targetPort: 80
+          port: "{{ fr24_web_port }}"
+          targetPort: 8754
           name : web
         - protocol: TCP
-          port: 30003
+          port: "{{ fr24_base_port }}"
           targetPort: 30003
-          name : beast
+          name : base-out
+        - protocol: TCP
+          port: "{{ fr24_raw_port }}"
+          targetPort: 30334
+          name: raw-out
         type: LoadBalancer 

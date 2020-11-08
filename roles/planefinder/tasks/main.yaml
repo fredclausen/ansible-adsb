@@ -39,9 +39,9 @@
                 value: "{{ lon }}"
               ports:
               - name: web
-                containerPort: 8754
-              - name: mlat
                 containerPort: 30053
+              - name: echo
+                containerPort: 30054
 
 - name: Deploy planefinder service
   k8s:
@@ -58,7 +58,11 @@
           app: planefinder
         ports:
         - protocol: TCP
-          port: 80
+          port: "{{ planefinder_web_port }}"
           targetPort: 30053
           name : beast
+        - protocol: TCP
+          port: "{{ planefinder_echo_port }}"
+          targetPort: 30054
+          name : echo
         type: LoadBalancer 

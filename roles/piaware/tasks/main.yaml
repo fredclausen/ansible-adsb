@@ -43,9 +43,17 @@
                 value: "relay"
               ports:
               - name: web
-                containerPort: 8080
+                containerPort: 80
+              - name: basestation
+                containerPort: 30003
+              - name: beastout
+                containerPort: 30005
               - name: mlat
-                containerPort: 30104
+                containerPort: 30105
+              - name: uatraw
+                containerPort: 30978
+              - name: uatjson
+                containerPort: 30979
 
 - name: Deploy piaware service
   k8s:
@@ -62,7 +70,27 @@
           app: piaware
         ports:
         - protocol: TCP
-          port: 30104
-          targetPort: 30104
-          name : beast
+          port: "{{ piaware_web }}"
+          targetPort: 80
+          name : web
+        - protocol: TCP
+          port: "{{ piaware_basestation }}"
+          targetPort: 30003
+          name : base-station
+        - protocol: TCP
+          port: "{{ piaware_beastout }}"
+          targetPort: 30005
+          name : beast-out
+        - protocol: TCP
+          port: "{{ piaware_mlat }}"
+          targetPort: 30105
+          name : mlat
+        - protocol: TCP
+          port: "{{ piaware_uatraw }}"
+          targetPort: 30978
+          name: uat-raw
+        - protocol: TCP
+          port: "{{ piaware_uatjson }}"
+          targetPort: 30979
+          name: uat-json
         type: LoadBalancer 

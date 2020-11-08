@@ -47,7 +47,7 @@
                 value: "{{ mlat_net_connector }}"
               ports:
               - name : mlat
-                containerPort: 30105
+                containerPort: "{{ mlat_outport }}"
 
 - name: Deploy MLAT service
   k8s:
@@ -64,7 +64,7 @@
           app: mlat
         ports:
         - protocol: TCP
-          port: 30105
-          targetPort: 30105
+          port: "{{ mlat_outport }}"
+          targetPort: "{{ mlat_outport }}"
           name : beast
         type: LoadBalancer 
