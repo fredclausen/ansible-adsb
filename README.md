@@ -116,6 +116,8 @@ Download this repository or git clone to your local system to get started.
 
 * You need to know the serial number of your RTLSDR dongles.
 
+* If you are going to provision the servers using these playbooks, the underlying system has to have apt as the package manager. In the future this requirement will go away.
+
 These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you don't have a cluster installed, we'll cover how to use this repository's files to set up rancher but keep in mind rancher cannot run on ARM32, and it is basically unusuable on Pi3B+ even if running a 64bit ARM distro due to the limits of the 3B+ hardware. k3s should be your choice if you do not have at a minimum Pi4s with 4gb of RAM for the master node.
 
 If you have a working cluster that can accessed using a local instance of kubectl, as well as ansible installed, head on down to [ADSB Workload Setup](#adsb-workload-setup). If not, read on!
