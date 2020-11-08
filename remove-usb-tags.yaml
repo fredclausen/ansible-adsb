@@ -1,0 +1,28 @@
+- hosts: localhost
+  gather_facts: no
+  become: no
+
+  tasks:
+    - name: Remove the readsb node tag
+    k8s:
+    state: "absent"
+    definition:
+      apiVersion: v1
+      kind: Node
+      metadata:
+        labels:
+          readsb: "usb"
+        name: "{{ readsb_node }}"
+    when: readsb_install==true
+
+    - name: Remove the dump978 node tag
+      k8s:
+        state: "absent"
+        definition:
+          apiVersion: v1
+          kind: Node
+          metadata:
+            labels:
+              dump1090: "usb"
+            name: "{{ dump1090_node }}"
+      when: dump978_install==true

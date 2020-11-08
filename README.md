@@ -58,7 +58,8 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
     * [Updating the Workloads](#updating-the-workloads)
     * [Deleting Workloads](#deleting-the-workloads)
     * [Updating the Server](#updating-the-server)
-    * [The node I am running readsb/dump978 on died. Now what?](#the-node-i-am-running-readsb-dump978-on-died-now-what-)
+    * [The node I am running readsb/dump978 on died. Now what?](#the-node-i-am-running-readsbdump978-on-died-now-what)
+    * [Adding In extra Nodes to the Cluster](#adding-in-extra-nodes-to-the-cluster)
 
 ## Future Expansion Of This Guide
 
@@ -491,7 +492,7 @@ You have the following options to force a redeployment:
 
 * Workloads can be deleted easily from the rancher interface via the Workloads page. If you do this and want the workload to not in the cluster again, make sure to change the `workload_install` option to false.
 
-* You can remove ALL workloads from the cluster as well. Ensure the `workload_install` is set to true for any workload that is currently running on the cluster, and the run the following command
+* You can remove ALL workloads from the cluster as well. Ensure that `workload_install` is set to true for any workload that is currently running on the cluster, and the run the following command
 
 ```
 ansible-playbook -i inventory/inventory remove-cluster-services.yaml
@@ -514,3 +515,25 @@ ansible-playbook -i inventory/inventory update-installed-packages.yaml
 ```
 
 ### The node I am running readsb/dump978 on died. Now what?
+
+One limiting factor we have in our cluster is that the dongles for the RTLSDR (or whatever hardware device you are using to provide the ADSB data) can be plugged in to only one node. If that node dies for any reason (I mean, Micro SD cards are relatively frail for storage) we lose ADSB data. Obviously, we want to quickly be able to recover from that, which we can.
+
+One note, I am going to address readsb in this section, but this also applies to dump978 as well. Just replace `readsb` with `dump978` and carry on.
+
+The first step is going to be to remove the node tag for readsb. What is happening under the hood is the readsb-protobuf workload can only be run on a node if it is tagged with `readsb=usb`, so we need to tell the cluster what node to run on by changing the tag.
+
+```
+ansible-playbook -i inventory/inventory remove-usb-tags.yaml
+```
+
+Now update `readsb_node` with the new node and save `all.yaml`.
+
+Issue the following command:
+
+```
+ansible-playbook -i inventory/inventory set-new-usb-tags.yaml
+```
+
+And your readsb workload should come back up on the new node.
+
+### Adding In Extra Nodes to the Cluster
