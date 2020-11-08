@@ -35,6 +35,8 @@
                 value: "{{ lon }}"
               - name: BEASTHOST
                 value: "{{ adsb_host }}"
+              - name: BEASTPORT
+                value: "{{ readsb_beastout_text_port }}"
               - name: OPENSKY_SERIAL
                 value: "{{ opensky_serial }}"
               - name: OPENSKY_USERNAME

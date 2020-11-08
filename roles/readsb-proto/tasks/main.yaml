@@ -104,7 +104,7 @@
               - name: READSB_NET_CONNECTOR
                 value: "{{ readsb_net_connector }}"
               - name: INFLUXDBURL
-                value: "http://{{ influxdb_ip }}:8086"
+                value: "{{ readsb_influxsb_url }}"
               ports:
               - name: web
                 containerPort: 8080
@@ -155,31 +155,31 @@
           app: readsb
         ports:
         - protocol: TCP
-          port: "{{ readsb_web }}"
+          port: "{{ readsb_web_port }}"
           targetPort: 8080
           name : web
         - protocol: TCP
-          port: "{{ readsb_rawin }}"
+          port: "{{ readsb_rawin_port }}"
           targetPort: 30001
           name : rawin
         - protocol: TCP
-          port: "{{ readsb_rawout }}"
+          port: "{{ readsb_rawout_port }}"
           targetPort: 30002
           name : rawout
         - protocol: TCP
-          port: "{{ readsb_sbs }}"
+          port: "{{ readsb_sbs_port }}"
           targetPort: 30003
           name: sbs
         - protocol: TCP
-          port: "{{ readsb_beastin }}"
+          port: "{{ readsb_beastin_port }}"
           targetPort: 30004
           name: beastin
         - protocol: TCP
-          port: "{{ readsb_beastout }}"
+          port: "{{ readsb_beastout_port }}"
           targetPort: 30005
           name : beatout
         - protocol: TCP
-          port: "{{ readsb_beastin_other }}"
+          port: "{{ readsb_beastin_other_port }}"
           targetPort: 30104
           name : beastinother
         type: LoadBalancer 

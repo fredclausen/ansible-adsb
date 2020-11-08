@@ -11,9 +11,11 @@ Tested and working on:
 Should work on:
 
 * `x86_64` (`amd64`) platform running non-apt based systems, but will require modification to the playbooks.
-* `armv7l` (`arm32v7`) platform (Raspberry Pi 3B+) running 32 bit raspian or ubuntu 32 bit arm os.
+* `armv7l` (`arm32v7`) platform (Raspberry Pi 3B+) running 32 bit raspian or ubuntu 32 bit arm os (NOT with rancher!)
 
-## Table of Contents
+
+If you are installing this on to an ARM based cluster and you do not have 64 bit OS installed you won't be able to use this guide's Cluster Setup and playbooks. Rancher requires ARM64; however, all of the cluster workloads should run on ARM32.
+
 
 * [fredclausen/ansible-adsb](#ansible-adsb)
   * [Table of Contents](#table-of-contents)
@@ -28,13 +30,26 @@ Should work on:
       * [Flashing the OS](#flashing-the-os)
       * [Getting your node IPs](#getting-node-ips)
       * [Update the OS and install packages](#update-the-os-and-install-packages)
-    * [Rancher setup](#rancher-setup)
   * [Cluster Setup](#cluster-setup)
+    * [Configure the new cluster](#configure-the-new-cluster)
+    * [Rancher setup](#rancher-setup)
     * [Configure the new cluster](#configure-the-new-cluster)
     * [Provision the new cluster](#provision-the-new-cluster)
   * [ADSB Workload Setup](#adsb-workload-setup)
+    * [Convenstions used in all.yaml](#conventions-used-in-all-yaml)
     * [MetalLB Setup](#metallb-setup)
     * [RTLSDR Dongle Setup](#rtlsdr-dongle-setup)
+    * [ADSB Hub Setup](#adsb-hub-setup)
+    * [ADSB Exchange Setup](#adsb-exchange-setup)
+    * [dump978 Setup](#dump978-setup)
+    * [FlightRadar24 Setup](#flightradar24-setup)
+    * [influxdb Setup](#influxdb-setup)
+    * [MLAT Setup](#mlat-setup)
+    * [OpenSky Setup](#opensky-setup)
+    * [PiAware Setup](#piaware-setup)
+    * [Plane Finder Setup](#plane-finder-setup)
+    * [readsb-proto Setup](#readsb-proto-setup)
+    * [tar1090 Setup](#tar1090-setup)
 
 ## Future Expansion Of This Guide
 
@@ -44,6 +59,8 @@ It is my goal to have this repository cover installing these docker images on an
 * k3s
 
 As well as other aviation related workloads like streaming ATC communication, etc.
+
+I also have no doubt missed some "best practice" stuff when it comes to how these playbooks were designed and how I designed the workloads for the cluster, among other things. If you see any security, optimizations, typos, etc, open an issue we can have a discussion!
 
 ## Workloads
 
@@ -80,11 +97,11 @@ Download this repository or git clone to your local system to get started.
 
 * Re-name `group_vars/all.template.yaml` to `group_vars/all.yaml`
 
-* You will need a NFS share to save the persistent data of the workloads. Edit `group_vars/all.yaml` and change `nfs_share_ip` and `nfs_share_path` to your NFS share. Save the file.
+* You will need a NFS share to save the persistent data of the workloads. If you are familiar with kubernetes storaging and want change this around, be my guest. However, by providing the playbooks a NFS share it will automatically set up the cluster storage correctly. Edit `group_vars/all.yaml` and change `nfs_share_ip` and `nfs_share_path` to your NFS share. Save the file.
 
 * You need to know the serial number of your RTLSDR dongles.
 
-These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you don't have a cluster installed, we'll cover how to use this repository's files to set up rancher (and eventually, when I test it out, k3s too!) but keep in mind rancher cannot run on ARM32, and it is basically unusuably on Pi3B+ due to the limits of the 3B+ hardware. k3s should be your choice if you do not have at a minimum Pi4s.
+These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you don't have a cluster installed, we'll cover how to use this repository's files to set up rancher but keep in mind rancher cannot run on ARM32, and it is basically unusuably on Pi3B+ due to the limits of the 3B+ hardware. k3s should be your choice if you do not have at a minimum Pi4s.
 
 If you have a working cluster that can accessed using a local instance of kubectl, and ansible installed, head on down to [ADSB Workload Setup](#adsb-workload-setup). If not, read on!
 
@@ -104,7 +121,7 @@ To flash the image on to an SD card, see the [other tools](https://www.raspberry
 
 For other architectures follow the install guide for your distribution of linux. Server distros are strongly recommended.
 
-#### Getting the node IPs
+#### Getting the Node IPs
 
 Now its time to start some configuration. Plug in your Pi's SD cards, power on your VMs, or otherwise turn on your nodes and ensure they are connected to your network.
 
@@ -129,7 +146,7 @@ If you do not have a UPS, or do not wish to configure it, delete all of the IPs 
 The config files that will be copied to the nodes in command we will run below. Modify the nut config files for the nut-server and nut-slave under roles/nut-(master/slave)/files to suit your configuration.
 
 
-#### Update the OS and install packages
+#### Update the OS and Install Packages
 
 Now it is time to prepare the system for the cluster, and we will do that by updating it, ensuring the hardware configuration for docker is correct, actually installing docker, and finally, installing rancher. 
 
@@ -143,13 +160,15 @@ ansible-playbook -i inventory/inventory setup-servers.yaml
 
 And sit back and wait. Depending on the age of the operating system you installed and the performance of the nodes, this may take a while. Your system will reboot to apply the host-name change and any kernel-updates.
 
+### Configure The New Cluster
+
 ## Cluster Setup
 
 At this point, you should have your nodes all prepared. Let us configure the cluster.
 
-Open your web browser and open it up to `https://your rancher ip you set above:8443`. Go through the initial setup which should all be self explanatory. Default username and password are both `admin`.
+## Configure t6he New Cluster
 
-### Configure The New Cluster
+Open your web browser and open it up to `https://your rancher ip you set above:8443`. Go through the initial setup which should all be self explanatory. Default username and password are both `admin`.
 
 The first thing we need to do is set up a new cluster. Click `Add Cluster`. If you do not see an `Add Cluster` button at the top right, click global at the very top of the screen. On the next screen, click `Existing Nodes`
 
@@ -173,7 +192,7 @@ On the next screen we have some values we need to save to `group_vars/all.yaml`.
 
 * Save all.yaml.
 
-### Provision The New Cluster
+### Provision the New Cluster
 
 Return to your terminal window and execute the following command
 
@@ -181,7 +200,7 @@ Return to your terminal window and execute the following command
 ansible-playbook -i inventory/inventory setup-pods-master.yaml
 ```
 
-And brew yourself a nice coffee. This will take a very long time. You may see some nodes show an error; that is fine, let the process take its course. What you are waiting to see in the Rancher management interface your cluster get fully provisioned. You can watch this by clicking `Nodes` at the top of the screen and waiting for your screen to not show any errors and the nodes to show active. It will look something like this.
+And brew yourself a nice coffee. This will take a very long time. You may see some nodes show an error; that is fine, let the process take its course and they will go away. What you are waiting to see in the Rancher management interface your cluster get fully provisioned. You can watch this by clicking `Nodes` at the top of the screen and waiting for your screen to not show any errors and the nodes to show active. It will look something like this.
 
 ![cluster nodes](images/node-provision.png)
 
@@ -191,7 +210,9 @@ Congratulations, you have a cluster! Let's get to the fun stuff.
 
 Before we go on to setting everything up, it is time to have a think about what workloads you want to deploy. At a bare minimum you will need readsb-proto. It isn't required to set up anything else; with that said, feeding the various ADSB websites is pretty cool and some even give you some minor perks for doing so, so why not? We'll go over configuring each workload below, but for any workload you do not want, change `workloadname_install` value to `false` and the workload will not be installed.
 
-Also, to keep the documentation clean, in this section if you are told to change a variable, the variable is located in `group_vars/all.yaml`.
+To keep the documentation clean, in this section if you are told to change a variable, the variable is located in `group_vars/all.yaml`.
+
+### Conventions Used In all.yaml
 
 ### MetalLB Setup
 
@@ -213,3 +234,25 @@ If you haven't already, time to plug in your RTLSDR dongles to whatever node(s) 
         + change `readsb_serial` to the serial number of the dongle
         + change `uat_host` to the host name of the node you have the dongle plugged in to.
         + change `dump1090_node` to the IP address of the node you have the dongle plugged in to.
+
+### ADSB Hub Setup
+
+### ADSB Exchange Setup
+
+### dump978 Setup
+
+### FlightRadar24 Setup
+
+### influxdb Setup
+
+### MLAT Setup
+
+### OpenSky Setup
+
+### piaware Setup
+
+### Plane Finder Setup
+
+### readsb-proto Setup
+
+### tar1090 Setup

@@ -74,23 +74,23 @@
           targetPort: 80
           name : web
         - protocol: TCP
-          port: "{{ piaware_basestation }}"
+          port: "{{ piaware_basestation_port }}"
           targetPort: 30003
           name : base-station
         - protocol: TCP
-          port: "{{ piaware_beastout }}"
+          port: "{{ piaware_beastout_port }}"
           targetPort: 30005
           name : beast-out
         - protocol: TCP
-          port: "{{ piaware_mlat }}"
+          port: "{{ piaware_mlat_port }}"
           targetPort: 30105
           name : mlat
         - protocol: TCP
-          port: "{{ piaware_uatraw }}"
+          port: "{{ piaware_uatraw_port }}"
           targetPort: 30978
           name: uat-raw
         - protocol: TCP
-          port: "{{ piaware_uatjson }}"
+          port: "{{ piaware_uatjson_port }}"
           targetPort: 30979
           name: uat-json
         type: LoadBalancer 

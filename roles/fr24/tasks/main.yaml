@@ -24,7 +24,7 @@
           spec:
             containers:
             - name: fr24
-              image: "{{ fr24_image}}"
+              image: "{{ fr24_image }}"
               imagePullPolicy: Always
               env:
               - name: TZ

@@ -34,4 +34,4 @@
               - name: CLIENTKEY
                 value: "{{ adsbhub_clientkey }}"
               - name: SBSPORT
-                value: "{{ readsb_sbs_text }}"
+                value: "{{ readsb_sbs_text_port }}"

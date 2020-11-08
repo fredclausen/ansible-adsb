@@ -36,11 +36,11 @@
               - name: BEASTHOST
                 value: "{{ adsb_host }}"
               - name: BEASTPORT
-                value: "{{ readsb_beastout_text }}"
+                value: "{{ readsb_beastout_text_port }}"
               - name: MLATHOST
                 value: "{{ mlat_host }}"
               - name: MLATPORT
-                value: "{{ mlat_outport_text }}"
+                value: "{{ mlat_out_port_text }}"
               ports:
               - name: web
                 containerPort: 80
@@ -68,7 +68,7 @@
           app: tar1090
         ports:
         - protocol: TCP
-          port: "{{ tar1090_web }}"
+          port: "{{ tar1090_web_port }}"
           targetPort: 80
           name : web
         type: LoadBalancer 
