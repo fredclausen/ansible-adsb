@@ -26,6 +26,7 @@ Should work on:
       * [Installing kubectl](#installing-kubectl)
       * [Flashing the OS](#flashing-the-os)
       * [Getting your node IPs](#getting-node-ips)
+      * [Update the OS and install packages](#update-the-os-and-install-packages)
     * [Rancher setup](#rancher-setup)
   * [Cluster Setup](#cluster-setup)
   * [ADSB Workload Setup](#adsb-workload-setup)
@@ -108,6 +109,21 @@ There are four sections here.
 If you do not have a UPS, or do not wish to configure it, delete all of the IPs under both headers.
 
 The config files that will be copied to the nodes in command we will run below. Modify the nut config files for the nut-server and nut-slave under roles/nut-(master/slave)/files to suit your configuration.
+
+
+#### Update the OS and install packages
+
+Now it is time to prepare the system for the cluster, and we will do that by updating it and ensuring the hardware configuration for docker is correct. 
+
+Open a terminal window and `cd` in to the directory containing the repository.
+
+Issue the following command
+
+```
+ansible-playbook -i inventory/inventory setup-servers.yaml
+```
+
+And sit back and wait. Depending on the age of the operating system you installed and the performance of the nodes, this may take a while.
 
 ## Cluster Setup
 
