@@ -97,7 +97,7 @@ fr24_base_port: 30003
 fr24_raw_port: 30334
 mlat_out_port: 30105
 mlat_out_port_text: "30105"
-piaware_web: 80
+piaware_web_port: 80
 piaware_basestation_port: 30003
 piaware_beastout_port: 30005
 piaware_mlat_port: 30105

@@ -39,6 +39,8 @@
                 value: "{{ piaware_feeder_id }}"
               - name: UAT_RECEIVER_HOST
                 value: "{{ uat_host }}"
+              - name: UAT_RECEIVER_PORT
+                value: "dump978_rawuat_port"
               - name: UAT_RECEIVER_TYPE
                 value: "relay"
               ports:
@@ -70,7 +72,7 @@
           app: piaware
         ports:
         - protocol: TCP
-          port: "{{ piaware_web }}"
+          port: "{{ piaware_web_port }}"
           targetPort: 80
           name : web
         - protocol: TCP

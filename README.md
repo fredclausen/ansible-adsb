@@ -395,6 +395,47 @@ This workload feeds data to [Opensky](https://opensky-network.org).
 
 ### piaware Setup
 
+This workload feeds data to [Flight Aware](https://flightaware.com).
+
+|Variable Name | Description | Notes |
+| ------------ | ----------- | ----- |
+| `piaware_install`  | Set to true to enable install, any other value to disable the install | None | 
+| `piaware_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
+| `piaware_feeder_id`  | The serial PiAware has assigned to your site | See [PiAware](https://github.com/mikenye/docker-piaware) for setup instructions |
+| `piaware_web_port`  | Port to expose the web interface | None |
+| `piaware_basestation_port`  | Port to expose the Base Station ADSB data | None |
+| `piaware_beastout_port`  |  Port to expose Beast out ADSB data | None |
+| `piaware_mlat_port`  | Port to expose MLAT data | Used by the MLAT container |
+| `piaware_uatraw_port`  | Port to expose UAT raw data | None |
+| `piaware_uatjson_port`  | Port to expose UAT JSON data | None |
+| `piaware_ip`  | Set the IP of the workload | None |
+
+This workload exposes a web interface at `piaware_ip:piaware_web_port`
+
 ### Plane Finder Setup
 
+This workload feeds data to [Plane Finder](https://planefinder.net).
+
+|Variable Name | Description | Notes |
+| ------------ | ----------- | ----- |
+| `planefinder_install`  | Set to true to enable install, any other value to disable the install | None | 
+| `planefinder_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
+| `planefinder_sharecode`  | The share code Plane Finder has assigned to your site | See [plane finder](https://github.com/mikenye/docker-planefinder) for setup instructions |
+| `planefinder_web_port`  | Port to expose the web interface | None |
+| `planefinder_echo_port`  | Unused at the moment | None |
+| `planefinder_ip`  | Set the IP of the workload | None |
+
+This workload exposes a web interface at `planefinder_ip:planefinder_web_port`
+
 ### tar1090 Setup
+
+This workload provides an impoved map visualization of the ADSB data from readsb, as well as heat maps to show coverage area.
+
+|Variable Name | Description | Notes |
+| ------------ | ----------- | ----- |
+| `tar1090_install`  | Set to true to enable install, any other value to disable the install | None | 
+| `tar1090_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
+| `tar1090_web_port`  | Port to expose to web interface | None |
+| `tar1090_ip`  | Set the IP of the workload | None |
+
+This workload exposes a web interface at `tar1090_ip:tar1090_web_port`
