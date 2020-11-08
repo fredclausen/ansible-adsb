@@ -82,6 +82,8 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,linux,windows,vscode
 group_vars/all.yaml
+group_vars/all_fred.yaml
+group_vars/all_brandon.yaml
 test.yaml
 inventory/temp
 archive/

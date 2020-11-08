@@ -66,7 +66,9 @@ Below is a list of workloads that can be deployed in to the cluster. Each worklo
 
 Download this repository or git clone to your local system to get started.
 
-Re-name `group_vars/all.template.yaml` to `group_vars/all.yaml`
+* Re-name `group_vars/all.template.yaml` to `group_vars/all.yaml`
+
+* You will need a NFS share to save the persistent data of the workloads. Edit `group_vars/all.yaml` and change `nfs_share_ip` and `nfs_share_path` to your NFS share. Save the file.
 
 These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you don't have a cluster installed, we'll cover how to use this repository's files to set up rancher (and eventually, when I test it out, k3s too!) but keep in mind rancher cannot run on ARM32, and it is basically unusuably on Pi3B+ due to the limits of the 3B+ hardware. k3s should be your choice if you do not have at a minimum Pi4s.
 
@@ -165,8 +167,10 @@ Return to your terminal window and execute the following command
 ansible-playbook -i inventory/inventory setup-pods-master.yaml
 ```
 
-And brew yourself a nice coffee. This will take a very long time. What you are waiting to see is in the Rancher management interface your cluster get fully provisioned. You can watch this by clicking `Nodes` at the top of the screen and waiting for your screen to not show any errors. It will look something like this.
+And brew yourself a nice coffee. This will take a very long time. You may see some nodes show an error; that is fine, let the process take its course. What you are waiting to see in the Rancher management interface your cluster get fully provisioned. You can watch this by clicking `Nodes` at the top of the screen and waiting for your screen to not show any errors and the nodes to show active. It will look something like this.
 
 ![cluster nodes](images/node-provision.png)
+
+Congratulations, you have a cluster! Let's get to the fun stuff.
 
 ## ADSB Workload Setup
