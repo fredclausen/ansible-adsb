@@ -58,7 +58,7 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
     * [Updating the Workloads](#updating-the-workloads)
     * [Deleting Workloads](#deleting-the-workloads)
     * [Updating the Server](#updating-the-server)
-    * [The node I am running readsb/dump978 on died. Now what?](#the-node-i-am-running-readsb-dump978-on-died-now-what)
+    * [The node I am running readsb/dump978 on died. Now what?](#the-node-i-am-running-readsb-dump978-on-died-now-what-)
 
 ## Future Expansion Of This Guide
 
@@ -475,10 +475,42 @@ Happy ADSB-ing!
 
 ## Misc
 
+In this section we will cover using the provided playbooks to manage the cluster and nodes.
+
 ### Updating the workloads
+
+Unfortunately, kubernetes does not have an easy way to force pods to re-deploy if the underlying docker image has changed.
+
+You have the following options to force a redeployment:
+
+* In the all.yaml file, instead of using `latest` or no tag, tag a specific release. When you know the image updated, change the release tag in the image name and rerun `ansible-playbook -i inventory/inventory setup-cluster-services.yaml`. This will cause any images that changed to get redeployed with the updated image. With the base images for most of the ADSB containers this isn't a really viable solution.
+
+* In the rancher interface, workload pane, click the checkmark by any workload you want to update and hit `Redeploy`. This will cause the images to get pulled again.
 
 ### Deleting workloads
 
+* Workloads can be deleted easily from the rancher interface via the Workloads page. If you do this and want the workload to not in the cluster again, make sure to change the `workload_install` option to false.
+
+* You can remove ALL workloads from the cluster as well. Ensure the `workload_install` is set to true for any workload that is currently running on the cluster, and the run the following command
+
+```
+ansible-playbook -i inventory/inventory remove-cluster-services.yaml
+```
+
+* Alternatively, if you want to use ansible but only want to remove a small number of workloads, look at teh test.template.yaml file (I suggest renaming it test.yaml) and under the `[Roles]` section, add in any workloads you want to delete (using the name of the folder found under `roles/name-of-workload`) and then run the following command
+
+```
+ansible-playbook -i inventory/inventory test.yaml --extra-vars "workload_state=absent"
+```
+
 ### Updating the server
+
+Once in a while you will want to ensure the operating system of the nodes is up to date. The provided playbook will make sure the required packages are all installed, update the cache of packages from the up-stream package repositories and lastly update the packages. In order to minimize down time of any part of the cluster, this playbook will run on one node at a time. If a kernel update is detected the node will be rebooted.
+
+Issue the following command in a terminal window to update the server.
+
+```
+ansible-playbook -i inventory/inventory update-installed-packages.yaml
+```
 
 ### The node I am running readsb/dump978 on died. Now what?
