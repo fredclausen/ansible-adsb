@@ -271,7 +271,7 @@ Please refer to the table below and set the values to match your installation ne
 | `readsb_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image | See [readsb general options](https://github.com/mikenye/docker-readsb-protobuf#readsb-general-options) for valid options. You probably want rtlsdr |
 | `readsb_device_serial`  | Serial number of the RTLSDR device | None |
 | `readsb_net_connector`  | Used to set the other container images providing MLAT or dump978 data | See [readsb network options](https://github.com/mikenye/docker-readsb-protobuf#readsb-network-options) for config options. If you aren't running either MLAT or dump978, remove all text between the quotes. If you are only using MLAT or dump978, remove the unused option |
-| `readsb_device_type` | Set to the type of radio being used | 
+| `readsb_device_type` | Set to the type of radio being used |  None |
 | `adsb_host`    | The IP address of the workload | This value not only sets the `readsb-protobuf` IP, is used across many workloads so that they can connect and receive ADSB data |
 | `readsb_web_port` | The port used to access the `readsb-protobuf` web interface | None |
 |`readsb_rawin_port` | The port used to receive ADSB raw data | None |
