@@ -383,6 +383,16 @@ The workload provides an aggregator of MLAT data that readsb can read from and s
 
 ### OpenSky Setup
 
+This workload feeds data to [Opensky](https://opensky-network.org).
+
+|Variable Name | Description | Notes |
+| ------------ | ----------- | ----- |
+| `opensky_install`  | Set to true to enable install, any other value to disable the install | None | 
+| `opensky_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
+| `opensky_serial`  | The serial Opensky has assigned to your site | See [opensky](https://github.com/mikenye/docker-opensky-network) for setup instructions |
+| `opensky_username`  | Your opensky user name | See [opensky](https://github.com/mikenye/docker-opensky-network) for setup instructions |
+
+
 ### piaware Setup
 
 ### Plane Finder Setup
