@@ -2,6 +2,8 @@
  
 This repository hosts [ansible](https://www.ansible.com) playbooks for deploying a full ADSB re-streaming site to various ADSB websites in to a [rancher](https://rancher.com) kubernetes cluster. Most of the focus is on deploying the workloads, however, there are included roles and playbooks for starting up the server nodes from scratch, deploying rancher, as well as a few useful and or fun workloads to deploy that aren't ADSB related.
 
+The primary goal of these playbooks is to make it as easy as possible for you to take any number of computers, put them in to a cluster, and with the minimal thought have a working cluster that is feeding your ADSB data.
+
 A special thank you to [mikenye](https://github.com/mikenye) for his fantastic ADSB docker images. Without them this project would not have even been possible. Additionally, a special thank you to [geerlingguy](https://github.com/geerlingguy) for his excellent [ansible for devops](https://github.com/geerlingguy/ansible-for-devops) youtube series and [turing pi](https://github.com/geerlingguy/turing-pi-cluster) series, from which I drew major inspiration to even try this.
 
 Tested and working on:
@@ -63,12 +65,15 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
 
 ## Future Expansion Of This Guide
 
-It is my goal to have this repository cover installing these docker images on any number of configurations and not just a rancher cluster. As such, this guide will eventually expand to cover the following install methods
+It is my goal to have this repository cover installing these docker images on any number of configurations. As such, I am working on the following cluster install methods:
 
 * Docker with no cluster
 * k3s
 
-As well as other aviation related workloads like streaming ATC communication, etc.
+As well as the following improvements:
+
+* Other aviation related workloads such as audio streaming/listening of air traffic frequecies
+* Package installation during server/cluster provisioning agnostic of underlying operating system
 
 I also have no doubt missed some "best practice" stuff when it comes to how these playbooks were designed and how I designed the workloads for the cluster, among other things. If you see any security, optimizations, typos, etc, open an issue we can have a discussion!
 
