@@ -232,7 +232,7 @@ Before we go on to setting everything up, it is time to have a think about what 
 
 * To keep the documentation clean, in this section if you are told to change a variable, the variable is located in `group_vars/all.yaml`.
 
-* Variables are used to configure the workloads to suit your setup. I have provided sane defaults that should require minimal configuration. If you need more advanced configuration that the variables provided give (not every enviornment variable is set, for instance) look at the `roles/workloadname/tasks/main.yaml` file.
+* Variables are used to configure the workloads to suit your setup. I have provided sane defaults that should require minimal configuration. If you need more advanced configuration than the variables provided give (not every enviornment variable is set, for instance) look at the `roles/workloadname/tasks/main.yaml` file.
 
 * Variables for a workload start with the name of the workload followed by an underscore
 
@@ -301,6 +301,8 @@ Please refer to the table below and set the values to match your installation ne
 | `readsb_beastin_other_port` | An alternative port for ADSB Beast formatted data | None |
 | `readsb_influxsb_url` | If you intend to write ADSB data to influx db, leave this value set. If you won't be using influx db, remove the text between the quotes | See [InfluxDB setup](#influxdb-setup) |
 
+This workload has a web interface that can be accessed at `adsb_host:readsb_web_port`
+
 ### ADSB Hub Setup
 
 This workload feeds data to [ADSB Hub](https://www.adsbhub.org).
@@ -323,6 +325,7 @@ This workload feeds data to [ADSB Exchange](https://www.adsbexchange.com) as wel
 | `adsbexchange_uuid`  | The UUID provided by ADSB Exchange to identify your site | See [asbdexchange](https://github.com/mikenye/docker-adsbexchange) for setup instructions to get the UUID if you don't already have one |
 | `adsbexchange_site_name`  | Your site name | None |
 | `adsbexchange_mlat_port` | The port to expose MLAT data | None |
+| `adsbexchange_ip` | Set the IP of the workload | None |
 
 ### dump978 Setup
 
@@ -336,8 +339,24 @@ This workload provides 978mhz UAT/ADS-R radar to readsb-protobuf and piaware.
 | `dump978_rawuat_port`  | Port to expose raw UAT data | For now, leave as default |
 | `dump978_json_port`  | Port to expose UAT data as JSON | None |
 | `dump978_rawout_port`  | Port to expose raw UAT data | For now, leave as default |
+| `uat_host` | Set the IP of the workload | None |
 
 ### FlightRadar24 Setup
+
+This workload feeds data to [FlightRadar24](https://www.flightradar24.com).
+
+|Variable Name | Description | Notes |
+| ------------ | ----------- | ----- |
+| `fr24_install`  | Set to true to enable install, any other value to disable the install | None | 
+| `fr24_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
+| `fr24_mlat_enable`  | Enable MLAT with FR24 service | None |
+| `fr24_key`  | The site site from FR24 for your site | See [flightradar24](https://github.com/mikenye/docker-flightradar24) for setup instructions |
+| `fr24_web_port`  | Web interface for the workload | None |
+| `fr24_base_port`  | Port to expose SBS formatted data | None |
+| `fr24_raw_port`  | Port to expose raw ADSB data | None |
+| `fr24_ip` | Set the IP of the workload | None |
+
+This workload has a web interface that can be accessed at `fr24_ip:fr24_web_port`
 
 ### influxdb Setup
 
