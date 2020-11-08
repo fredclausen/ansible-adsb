@@ -297,7 +297,7 @@ Please refer to the table below and set the values to match your installation ne
 | `readsb_sbs_text_port` | Same as above, but it is set between quotes | Ensure both `sbs` variables are the same number. This is done because of kubernetes/ansible formatting requirements |
 | `readsb_beastin_port` | The port used to receive ADSB Beast formatted data | None |
 | `readsb_beastout_port` | The port used to expose ADSB Beast formatted data | None |
-| `readsb_beastout_text_port` | | Same as above, but it is set between quotes | Ensure both `beastout` variables are the same number. This is done because of kubernetes/ansible formatting requirements |
+| `readsb_beastout_text_port` | Same as above, but it is set between quotes | Ensure both `beastout` variables are the same number. This is done because of kubernetes/ansible formatting requirements |
 | `readsb_beastin_other_port` | An alternative port for ADSB Beast formatted data | None |
 | `readsb_influxsb_url` | If you intend to write ADSB data to influx db, leave this value set. If you won't be using influx db, remove the text between the quotes | See [InfluxDB setup](#influxdb-setup) |
 
@@ -365,10 +365,21 @@ The workload provides an influxdb instance that readsb-protobuf can write ADSB d
 |Variable Name | Description | Notes |
 | ------------ | ----------- | ----- |
 | `influxdb_install`  | Set to true to enable install, any other value to disable the install | Most installs will want this workload disabled | 
-| `influxdb_image`  | Set the docker image used | [mikenye](https://github.com/mikenye) is constantly adding in new features and sometimes won't have the features on the `:latest` image |
+| `influxdb_image`  | Set the docker image used | None |
 | `influxdb_ip` | Set the IP of the workload | None |
 
 ### MLAT Setup
+
+The workload provides an aggregator of MLAT data that readsb can read from and show the map visualization.
+
+|Variable Name | Description | Notes |
+| ------------ | ----------- | ----- |
+| `mlat_install`  | Set to true to enable install, any other value to disable the install | None | 
+| `readsb_image`  | Set the docker image used. This is the readsb-protobuf container, configured to operate only as an MLAT host | None |
+| `mlat_host` | Set the IP of the workload | None |
+| `mlat_out_port` | Port to expost the aggregated MLAT data | None |
+| `mlat_out_port_text` | Same as above, but it is set between quotes | Ensure both `out_port` variables are the same number. This is done because of kubernetes/ansible formatting requirements |
+| `mlat_net_connector` | Used to tell the workload what containers provide MLAT data | See [readsb network options](https://github.com/mikenye/docker-readsb-protobuf#readsb-network-options) for formatting. Currently, PiAware and ADSB Exchange provide MLAT data |
 
 ### OpenSky Setup
 

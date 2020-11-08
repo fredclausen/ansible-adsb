@@ -180,7 +180,7 @@ readsb_image: "mikenye/readsb-protobuf"
 readsb_device_type: "rtlsdr"
 readsb_serial: "00000111"
 # mlat and 978 host IPs
-readsb_net_connector: "{{ mlat_host }},{{ mlat_out_port }},beast_in;{{ uat_host }},{{ dump978_rawuat_port }},raw_in"
+readsb_net_connector: "{{ mlat_host }},{{ mlat_out_port }},beast_in;{{ uat_host }},{{ dump978_rawout_port }},raw_in"
 
 ##-------ADSB Feeder and Misc Workloads--------##
 
