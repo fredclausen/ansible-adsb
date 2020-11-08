@@ -18,13 +18,19 @@ Should work on:
 * [fredclausen/ansible-adsb](#ansible-adsb)
   * [Table of Contents](#table-of-contents)
   * [Workloads](#workloads)
+    * [ADSB] (#adsb)
+    * [Fun or Useful](#fun-or-useful)
   * [Prerequisites](#prerequisites)
+    * [Initial server setup](#initial-server-setup)
+    * [Rancher setup](#rancher-setup)
+  * [Cluster Setup](#cluster-setup)
+  * [ADSB Workload Setup](#adsb-workload-setup)
 
 ## Workloads
 
 Below is a list of workloads that can be deployed in to the cluster. Each workload can be individually turned off if you decide you don't want to install it in to the cluster via the `group_vars/all.yaml` file. This will be discussed further in the [config](#config) section.
 
-* ADSB
+### ADSB
 
     | Workload | Type |
     | ---------|------|
@@ -38,3 +44,22 @@ Below is a list of workloads that can be deployed in to the cluster. Each worklo
     | [plane finder](https://github.com/mikenye/docker-planefinder) | Feeder |
     | [readsb-proto-buf](https://github.com/mikenye/docker-readsb-protobuf) | RTLSDR Decoder / Statistics collection / Statistics Visualization / Map visualization of targets |
     | [tar1090](https://github.com/mikenye/docker-tar1090) | Map visualization of targets |
+
+   Fun or Useful
+      | Workload | Type |
+      | ---------|------|
+      | cloudflared | DNS encryption |
+      | pihole | DNS ad filtering |
+      | guac | Server management interfaces (SSH, remote desktop, etc) |
+      | nut | UPS management for cluster notes |
+      | transmission | torrent client |
+
+## Prerequisites
+
+These playbooks are designed to run against a kubernetes cluster. This cluster could be running k8s, k3s, or Rancher rke. If you have a working cluster that can accessed using a local instance of kubectl, head on down to [ADSB Workload Setup](#adsb-workload-setup). If not, read on!
+
+
+
+## Cluster Setup
+
+## ADSB Workload Setup
