@@ -74,7 +74,7 @@ I also have no doubt missed some "best practice" stuff when it comes to how thes
 
 ## Workloads
 
-Below is a list of workloads that can be deployed in to the cluster. Each workload can be individually turned off if you decide you don't want to install it in to the cluster via the `group_vars/all.yaml` file. This will be discussed further in the [config](#config) section.
+Below is a list of workloads that can be deployed in to the cluster. Each workload can be individually turned off if you decide you don't want to install it in to the cluster via the `group_vars/all.yaml` file. This will be discussed further in the [config](#configure-the-new-cluster) section.
 
 ### ADSB
 
@@ -540,7 +540,7 @@ And your readsb workload should come back up on the new node.
 
 So, you like your cluster but want more....clustery goodness? I'm with you.
 
-Adding nodes is super easy! Create a temporary inventory file with either `[master]` or `[worker]` section in it, and follow the formatting convention in the main inventory file as discussed in [Getting your node IPs](#getting-node-ips) with the new IP address(es) of the new nodes.
+Adding nodes is super easy! After your OS is installed and ready to provision, create a temporary inventory file with either `[master]` or `[worker]` section in it, and follow the formatting convention in the main inventory file as discussed in [Getting your node IPs](#getting-node-ips) with the new IP address(es) of the new nodes.
 
 Issue the following commands to provision the new node:
 
