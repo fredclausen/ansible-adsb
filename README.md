@@ -10,7 +10,7 @@ Tested and working on:
 
 Should work on:
 
-* `x86_64` (`amd64`) platform
+* `x86_64` (`amd64`) platform running non-apt based systems, but will require modification to the playbooks.
 * `armv7l` (`arm32v7`) platform (Raspberry Pi 3B+) running 32 bit raspian or ubuntu 32 bit arm os.
 
 ## Table of Contents
@@ -29,6 +29,7 @@ Should work on:
       * [Update the OS and install packages](#update-the-os-and-install-packages)
     * [Rancher setup](#rancher-setup)
   * [Cluster Setup](#cluster-setup)
+    * [Configure the new cluster](#configure-the-new-cluster)
   * [ADSB Workload Setup](#adsb-workload-setup)
 
 ## Workloads
@@ -113,7 +114,7 @@ The config files that will be copied to the nodes in command we will run below. 
 
 #### Update the OS and install packages
 
-Now it is time to prepare the system for the cluster, and we will do that by updating it and ensuring the hardware configuration for docker is correct. 
+Now it is time to prepare the system for the cluster, and we will do that by updating it, ensuring the hardware configuration for docker is correct, actually installing docker, and finally, installing rancher. 
 
 Open a terminal window and `cd` in to the directory containing the repository.
 
@@ -123,8 +124,36 @@ Issue the following command
 ansible-playbook -i inventory/inventory setup-servers.yaml
 ```
 
-And sit back and wait. Depending on the age of the operating system you installed and the performance of the nodes, this may take a while.
+And sit back and wait. Depending on the age of the operating system you installed and the performance of the nodes, this may take a while. Your system will reboot to apply the host-name change and any kernel-updates.
 
 ## Cluster Setup
+
+At this point, you should have your nodes all prepared. Let us configure the cluster.
+
+Open your web browser and open it up to `https://your rancher ip you set above:8443`. Go through the initial setup which should all be self explanatory. Default username and password are both `admin`.
+
+### Configure The New Cluster
+
+The first thing we need to do is set up a new cluster. Click `Add Cluster`. If you do not see an `Add Cluster` button at the top right, click global at the very top of the screen. On the next screen, click `Existing Nodes`
+
+We need to change a few configuration options here. 
+
+* Give your cluster a name under `Cluster Name`.
+
+* Under `Kubenetes Options` change `Network Provider` to `Flannel`.
+
+* Under `Advanced Options` change `Nginx Ingress` to `Disabled`.
+
+* On the next screen we have some values we need to save to `group_vars/all.yaml`.
+
+* Copy the value after `--token` to the `rancher_token` variable.
+
+* Copy the value after `--ca-checksum` to the `rancher_checksum` variable.
+
+* Copy the value after `--server` to the `rancher_server` variable.
+
+* Save all.yaml.
+
+Click `Next`
 
 ## ADSB Workload Setup
