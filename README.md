@@ -75,8 +75,9 @@ As well as the following improvements:
 
 * Other aviation related workloads such as audio streaming/listening of air traffic frequecies
 * Package installation during server/cluster provisioning agnostic of underlying operating system
+* Health monitoring of the cluster/computer
 
-I also have no doubt missed some "best practice" stuff when it comes to how these playbooks were designed and how I designed the workloads for the cluster, among other things. If you see any security, optimizations, typos, etc, open an issue we can have a discussion!
+I also have no doubt missed some "best practice" stuff when it comes to how these playbooks were designed and how I designed the workloads for the cluster, among other things. If you see any security issues, optimizations, typos, etc, open an issue we can have a discussion!
 
 ## Workloads
 
@@ -246,7 +247,9 @@ If you get no errors, congratulations, you have a cluster and can issue commands
 
 Before we go on to setting everything up, it is time to have a think about what workloads you want to deploy. At a bare minimum you will need readsb-proto. It isn't required to set up anything else; with that said, feeding the various ADSB websites is pretty cool and some even give you some minor perks for doing so, so why not? We'll go over configuring each workload below.
 
-I have provided a IPs.txt file that includes the default IPs set for each workload. As you go through the configuration below, I suggest listing the IPs in that file for each workload so that you have a list of them all in one place.
+Additionally, it is time to think about IP addresses and ports. I have provided a IPs.txt file that includes the default IPs set for each workload. As you go through the configuration below, I suggest listing the IPs in that file for each workload so that you have a list of them all in one place. You will set the IP address for that workload in your deployment via `workloadname_ip` variable.
+
+All of the workloads in the default all.yaml config have the default ports set in the variables; the only exception is if any workload has a web interface that is not on port 80. If the web interface is default to a non port 80 port, I have mapped those back to port 80 for the default port. This configuration works as long as each workload gets a unique IP. There is no reason I can see that you will have to change these ports if you are using a cluster with metallb, but they are configurable. If you are deploying these workloads on a single machine in docker, you will need to ensure that no two workloads expose the same port, and you do that via the `workload_portjob_port` variables.
 
 ### Conventions Used In all.yaml
 
@@ -258,9 +261,7 @@ I have provided a IPs.txt file that includes the default IPs set for each worklo
 
 * To enable the installation of a workload, ensure `workload_install` is set to  `true`
 
-* The layout may appear messy (and I would LOVE feedback on how to make it better), but there is a method to the madness I chose. I have gloabl/server configuration at the top, followed by global values that apply to all workloads, followed by IPs for the workloads, followed by port mapping, credentials for the workloads, and finally, the workload configurations. The idea with splitting up the sections this way is each section might reference variable names from the previous section to configure certain items, and I wanted a value to be set once (such as the IP address or port mapping for a workload) and any workload that needs to know about that IP address or port mapping can just use the variable name.
-
-* All of the workloads in the default all.yaml config have the default ports set in the variables; the only exception is if any workload has a web interface that is not on port 80. If the web interface is default to a non port 80 port, I have mapped those back to port 80. This configuration works as long as each workload gets a unique IP. There is no reason I can see that you will have to change these ports, but they are configurable.
+* The layout may appear messy (and I would LOVE feedback on how to make it better) but there is a method to the madness I chose. I have global/server configuration at the top, followed by global values that apply to all workloads, followed by IPs for the workloads, followed by port mapping, credentials for the workloads, and finally, the workload configurations. The idea with splitting up the sections this way is each section might reference variable names from the previous section to configure certain items, and I wanted a value to be set once (such as the IP address or port mapping for a workload) and any workload that needs to know about that IP address or port mapping can just use the variable name.
 
 ### MetalLB Setup
 
@@ -486,7 +487,11 @@ Happy ADSB-ing!
 
 ## Misc
 
-In this section we will cover using the provided playbooks to manage the cluster and nodes.
+In this section we will cover using the provided playbooks to manage the cluster and nodes, as well as some best practices for using these playbooks.
+
+### Best Practices
+
+If you need to [change a workload config](#Changing-a-Workload-Config) the best way of doing so is via following the directions in that section and changing the `all.yaml` values for the workload and redeploying via the the `setup-cluster-services.yaml` playbook. The reason for that is if you use Rancher or any other management web interface to change the workload you might end up not being able to use the playbooks any more to control that workload. I don't know why this happens, but I've had it happen multiple times so it is definately a thing. The way to fix it is to use the Rancher/whatever management interface you are using to delete the workload from there and then run the `setup-cluster-services.yaml` again to deploy the workload.
 
 ### Changing a Workload Config
 
@@ -538,9 +543,9 @@ ansible-playbook -i inventory/inventory update-installed-packages.yaml
 
 One limiting factor we have in our cluster is that the dongles for the RTLSDR (or whatever hardware device you are using to provide the ADSB data) can be plugged in to only one node. If that node dies for any reason (I mean, Micro SD cards are relatively frail for storage) we lose ADSB data and none of the feeders can do their job, map visualizations are gone, and your performance charts will look sad. Obviously, we want to quickly be able to recover from that, which we can.
 
-One note, I am going to address readsb in this section, but this also applies to dump978 as well. Just replace `readsb` with `dump978` and carry on.
+One note, I am going to address readsb in this section but this also applies to dump978 as well. Just replace `readsb` with `dump978` and carry on.
 
-The first step is going to be to remove the node tag for readsb. What is happening under the hood is the readsb-protobuf workload can only be run on a node if it is tagged with `readsb=usb`, so we need to tell the cluster what node to run on by changing the tag.
+The first step is going to be to remove the node tag for readsb. What is happening under the hood is the readsb-protobuf workload can only be run on a node if it is tagged with `readsb=usb`, so we need to tell the cluster what node to run readsb on by changing the tag.
 
 ```
 ansible-playbook -i inventory/inventory remove-usb-tags.yaml
