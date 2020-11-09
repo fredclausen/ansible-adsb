@@ -476,7 +476,7 @@ ansible-playbook -i inventory/inventory setup-cluster-services.yaml
 
 And sit back. It should not take too much time to run through the play book, and we you are done, look at the workload logs in Rancher, paying attention to making sure none of the workloads are in an unstarted state (generally related to architecture issues of the docker image; I've done my best to mitigate that) and that readsb and the feeders have connected to their services with no issues.
 
-If something didn't deploy right or you received some kind of error from ansible, don't fret! The errors from ansible are generally pretty easy to figure out what was not configured right, and easy to change it. Once you've done that, just rerun the command above. Don't worry, you can run that command a million times if you want; only if a config change or the workload is not deployed will anything actually change on the cluster.
+If something didn't deploy right or you received some kind of error from ansible, don't fret! The errors from ansible are generally pretty easy to figure out what was not configured right, and easy to change it. Once you've done that, just rerun the command above. Don't worry, you can run that command a million times if you want; only if a config changes or the workload is not deployed will anything actually change on the cluster.
 
 And that really is it. I'll cover below some extra stuff related to the cluster, such as maintence and removing workloads, but you are all done for now!
 
@@ -496,7 +496,7 @@ It is as easy as updating the variables in `all.yaml` to suit your new config an
 ansible-playbook -i inventory/inventory setup-cluster-services.yaml
 ```
 
-Again. Don't worry, you can run that command a million times if you want; only if a config change or the workload is not deployed will anything actually change on the cluster.
+Again. Don't worry, you can run that command a million times if you want; only if a config changes or the workload is not deployed will anything actually change on the cluster.
 
 ### Updating the workloads
 
