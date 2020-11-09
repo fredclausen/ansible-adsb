@@ -56,7 +56,7 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
     * [Plane Finder Setup](#plane-finder-setup)
     * [tar1090 Setup](#tar1090-setup)
     * [Install the workloads](#install-the-workloads)
-   * [Misc](#misc)
+  * [Misc](#misc)
     * [Updating the Workloads](#updating-the-workloads)
     * [Deleting Workloads](#deleting-the-workloads)
     * [Updating the Server](#updating-the-server)
