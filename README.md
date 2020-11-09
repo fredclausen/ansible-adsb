@@ -57,11 +57,12 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
     * [tar1090 Setup](#tar1090-setup)
     * [Install the workloads](#install-the-workloads)
   * [Misc](#misc)
+    * [Changing a Workload Config](#changing-a-workload-config)
     * [Updating the Workloads](#updating-the-workloads)
     * [Deleting Workloads](#deleting-the-workloads)
     * [Updating the Server](#updating-the-server)
     * [The node I am running readsb/dump978 on died. Now what?](#the-node-i-am-running-readsbdump978-on-died-now-what)
-    * [Adding In extra Nodes to the Cluster](#adding-in-extra-nodes-to-the-cluster)
+    * [Adding In Extra Nodes to the Cluster](#adding-in-extra-nodes-to-the-cluster)
 
 ## Future Expansion Of This Guide
 
@@ -465,7 +466,7 @@ This workload exposes a web interface at `tar1090_ip:tar1090_web_port`
 
 ### Install the Workloads
 
-We have one more setting to take a look at. Most likely, unless you want to set up the Misc workloads (not covered in this guide), ensure `install_misc_services` is set to false and `install_misc_services` is set to true.
+We have one more setting to take a look at. Most likely, unless you want to set up the Misc workloads (not covered in this guide...if you've made it this far and end up with ADSB stuff working the "Fun" stuff should be easy!), ensure `install_misc_services` is set to false and `install_adsb_services` is set to true.
 
 And now, let us install the workloads. Issue the following command in your terminal.
 
@@ -474,6 +475,8 @@ ansible-playbook -i inventory/inventory setup-cluster-services.yaml
 ```
 
 And sit back. It should not take too much time to run through the play book, and we you are done, look at the workload logs in Rancher, paying attention to making sure none of the workloads are in an unstarted state (generally related to architecture issues of the docker image; I've done my best to mitigate that) and that readsb and the feeders have connected to their services with no issues.
+
+If something didn't deploy right or you received some kind of error from ansible, don't fret! The errors from ansible are generally pretty easy to figure out what was not configured right, and easy to change it. Once you've done that, just rerun the command above. Don't worry, you can run that command a million times if you want; only if a config change or the workload is not deployed will anything actually change on the cluster.
 
 And that really is it. I'll cover below some extra stuff related to the cluster, such as maintence and removing workloads, but you are all done for now!
 
@@ -484,6 +487,16 @@ Happy ADSB-ing!
 ## Misc
 
 In this section we will cover using the provided playbooks to manage the cluster and nodes.
+
+### Changing a Workload Config
+
+It is as easy as updating the variables in `all.yaml` to suit your new config and running 
+
+```
+ansible-playbook -i inventory/inventory setup-cluster-services.yaml
+```
+
+Again. Don't worry, you can run that command a million times if you want; only if a config change or the workload is not deployed will anything actually change on the cluster.
 
 ### Updating the workloads
 
