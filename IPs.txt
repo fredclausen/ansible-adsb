@@ -14,3 +14,4 @@ IPs
 192.168.31.220 adsbx
 192.168.31.221 influx
 192.168.31.222 planefinder
+192.168.31.223 icecast

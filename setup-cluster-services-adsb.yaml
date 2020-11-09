@@ -30,3 +30,5 @@
       when: tar1090_install == true    
     - role: influxdb
       when: influxdb_install == true
+    - role: icecast
+      when: icecast_install == true
