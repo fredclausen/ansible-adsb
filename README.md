@@ -55,6 +55,7 @@ If you are installing this on to an ARM based cluster and you do not have 64 bit
     * [PiAware Setup](#piaware-setup)
     * [Plane Finder Setup](#plane-finder-setup)
     * [tar1090 Setup](#tar1090-setup)
+    * [RTLSDR Airband](#rtlsdr-airband)
     * [Install the workloads](#install-the-workloads)
   * [Misc](#misc)
     * [Changing a Workload Config](#changing-a-workload-config)
@@ -97,6 +98,7 @@ Below is a list of workloads that can be deployed in to the cluster. Each worklo
 | [plane finder](https://github.com/mikenye/docker-planefinder) | Feeder |
 | [readsb-proto-buf](https://github.com/mikenye/docker-readsb-protobuf) | RTLSDR Decoder / Statistics collection / Statistics Visualization / Map visualization of targets |
 | [tar1090](https://github.com/mikenye/docker-tar1090) | Map visualization of targets |
+| [rtlsdir-airband](https://github.com/fredclausen/docker-rtlsdrairband) | VHF Airband Communication receiver |
 
 ## Fun or Useful
 
@@ -464,6 +466,10 @@ This workload provides an impoved map visualization of the ADSB data from readsb
 | `tar1090_ip`  | Set the IP of the workload | None |
 
 This workload exposes a web interface at `tar1090_ip:tar1090_web_port`
+
+### RTLSDR Airband
+
+WIP. See [the repository](https://github.com/fredclausen/docker-rtlsdrairband) for details.
 
 ### Install the Workloads
 

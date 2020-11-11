@@ -23,6 +23,8 @@ readsb_node: cluster-worker05
 #the node hostname, from the inventory file, that has 978 RTLSDR dongle
 dump1090_node: cluster-worker05
 
+airband_node: cluster-worker06
+
 #metal-lb version to install
 metallb_version: v0.9.5
 
@@ -69,6 +71,7 @@ influxdb_ip: "192.168.31.221"
 piaware_ip: "192.168.31.217"
 planefinder_ip: "192.168.31.222"
 tar1090_ip: "192.168.31.214"
+airband_ip: "192.168.31.223"
 
 # workload secrets
 
@@ -83,6 +86,9 @@ opensky_username: "secret"
 fr24_key: "secret"
 planefinder_sharecode: "secret"
 piaware_feeder_id: "secret"
+transmission_pass: "secret"
+pihole_webpassword: "secret"
+airband_admin_password: "secret"
 
 # workload ports
 # for some reason EVs require the port to be set as text.
@@ -95,6 +101,7 @@ dump978_rawout_port: 37981
 fr24_web_port: 80
 fr24_base_port: 30003
 fr24_raw_port: 30334
+airband_port: 8000
 mlat_out_port: 30105
 mlat_out_port_text: "30105"
 piaware_web_port: 80
@@ -134,11 +141,10 @@ guac_image: "oznu/guacamole:armhf"
 pihole_install: true
 pihole_image: "pihole/pihole"
 pihole_dns: "192.168.31.212#5353"
-pihole_webpassword: "PropilotFred"
 
 transmission_install: true
 transmission_image: "linuxserver/transmission"
-transmission_pass: "Propilot11!!"
+
 
 transmission_data_path: "/volume1/Cluster-Plex"
 transmission_media_path: "/volume1/Media"
@@ -194,11 +200,25 @@ adsbhub_image: "mikenye/adsbhub"
 adsbexchange_install: true
 adsbexchange_image: "mikenye/adsbexchange"
 
+airband_install: true
+airband_image: "fredclausen/rtlsdrairband:latest"
+airband_hostname: "192.168.31.223"
+airband_station1_type: "rtlsdr"
+airband_station1_gain: "26"
+airband_station1_mode: "scan"
+airband_station1_freqs: "123.9, 124.325, 125.45, 127.4, 124.4, 134.8, 133.65, 132.8, 126.3"
+airband_station1_serial: "00013475"
+airband_station1_server: "127.0.0.1"
+airband_station1_mountpoint: "KABQ.mp3"
+airband_station1_name: "Albuquerque ATC"
+airband_station1_genre: "Aviation"
+
 # Flight Radar 24
 
 fr24_install: true
 fr24_image: "mikenye/fr24feed:1.0.25-3_armhf_arm64"
 fr24_mlat_enable: "yes"
+
 
 # influx db
 

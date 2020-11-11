@@ -1,0 +1,98 @@
+- name: label node with RTLSDR dongle for rtlsdr-airband
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: v1
+      kind: Node
+      metadata:
+        labels:
+          airband: "usb"
+        name: "{{ airband_node }}"
+
+- name: Deploy rtlsdr-airband
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: rtlsdr-airband
+        namespace: default
+        labels:
+          app: rtlsdr-airband
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: rtlsdr-airband
+        template:
+          metadata:
+            labels:
+              app: rtlsdr-airband
+          spec:
+            nodeSelector:
+              airband: usb
+            containers:
+            - name: rtlsdr-airband
+              image: "{{ airband_image }}"
+              imagePullPolicy: Always
+              securityContext:
+                privileged: true
+              env:
+              - name: ICECAST_ADMIN_PASSWORD
+                value: "{{ airband_admin_password }}"
+              - name: ICECAST_HOSTNAME
+                value: "{{ airband_hostname }}"
+              - name: STATION1_RADIO_TYPE
+                value: "{{ airband_station1_type }}"
+              - name: STATION1_GAIN
+                value: "{{ airband_station1_gain }}"
+              - name: STATION1_MODE
+                value: "{{ airband_station1_mode }}"
+              - name: STATION1_FREQS
+                value: "{{ airband_station1_freqs }}"
+              - name: STATION1_SERIAL
+                value: "{{ airband_station1_serial }}"
+              - name: STATION1_SERVER
+                value: "{{ airband_station1_server }}"
+              - name: STATION1_MOUNTPOINT
+                value: "{{ airband_station1_mountpoint }}"
+              - name: STATION1_NAME
+                value: "{{ airband_station1_name }}"
+              - name: STATION1_GENRE
+                value: "{{ airband_station1_genre }}"
+              volumeMounts:
+     #         - mountPath: /usr/local/etc/
+      #          name: readsb-run
+      #          subPath: rtlsdr-airband
+              - mountPath: /dev/bus/
+                name: usb
+            volumes:
+        #    - name: readsb-run
+        #      persistentVolumeClaim:
+        #        claimName: readsb-run
+            - name: usb
+              hostPath:
+                path: /dev/bus/
+
+- name: Deploy icecast service
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: rtlsdr-airband
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ airband_ip }}"
+        selector:
+          app: rtlsdr-airband
+        ports:
+        - protocol: TCP
+          port: "{{ airband_port }}"
+          targetPort: 8000
+          name : output
+        type: LoadBalancer 
