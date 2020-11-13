@@ -4,7 +4,7 @@
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
-- name: Add Docker Repository for ARM
+- name: Add Docker Repository for ARM64
   apt_repository:
     repo: "deb [arch=arm64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
     state: present

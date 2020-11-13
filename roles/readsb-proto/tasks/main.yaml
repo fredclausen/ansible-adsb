@@ -75,8 +75,6 @@
               securityContext:
                 privileged: true
               env:
-              - name: VERBOSE_LOGGING
-                value: "true"
               - name: TZ
                 value: "{{ timezone }}"
               - name: READSB_LAT

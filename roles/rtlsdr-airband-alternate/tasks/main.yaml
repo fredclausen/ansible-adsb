@@ -7,7 +7,7 @@
       metadata:
         labels:
           airband: "usb"
-        name: "{{ airband_node }}"
+        name: "{{ airband_alt_node }}"
 
 - name: Deploy rtlsdr-airband
   k8s:
@@ -46,29 +46,11 @@
               - name: RTLSDRAIRBAND_CUSTOMCONFIG
                 value: "true"
               - name: ICECAST_HOSTNAME
-                value: "{{ airband_hostname }}"
-              - name: RTLSDRAIRBAND_RADIO_TYPE
-                value: "{{ airband_station1_type }}"
-              - name: RTLSDRAIRBAND_GAIN
-                value: "{{ airband_station1_gain }}"
-              - name: RTLSDRAIRBAND_MODE
-                value: "{{ airband_station1_mode }}"
-              - name: RTLSDRAIRBAND_FREQS
-                value: "{{ airband_station1_freqs }}"
-              - name: RTLSDRAIRBAND_SERIAL
-                value: "{{ airband_station1_serial }}"
-              - name: RTLSDRAIRBAND_SERVER
-                value: "{{ airband_station1_server }}"
-              - name: RTLSDRAIRBAND_MOUNTPOINT
-                value: "{{ airband_station1_mountpoint }}"
-              - name: RTLSDRAIRBAND_NAME
-                value: "{{ airband_station1_name }}"
-              - name: RTLSDRAIRBAND_GENRE
-                value: "{{ airband_station1_genre }}"
+                value: "{{ airband_alt_hostname }}"
               volumeMounts:
               - mountPath: /run/rtlsdr-airband
                 name: readsb-run
-                subPath: rtlsdr-airband
+                subPath: rtlsdr-airband-alt
               - mountPath: /dev/bus/
                 name: usb
             volumes:
@@ -89,7 +71,7 @@
         name: rtlsdr-airband
         namespace : default
       spec:
-        loadBalancerIP: "{{ airband_ip }}"
+        loadBalancerIP: "{{ airband_alt_ip }}"
         selector:
           app: rtlsdr-airband
         ports:

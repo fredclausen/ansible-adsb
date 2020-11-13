@@ -18,6 +18,7 @@
       - nut
       - rtl-sdr
       - librtlsdr-dev
+      #- python3
     state: present
 - name: Install required python modules
   pip:

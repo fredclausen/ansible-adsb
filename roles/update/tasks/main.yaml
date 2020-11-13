@@ -26,6 +26,7 @@
      - nut
      - rtl-sdr
      - librtlsdr-dev
+     #- python3
     state: present
 
   # get a list of packages that have updates

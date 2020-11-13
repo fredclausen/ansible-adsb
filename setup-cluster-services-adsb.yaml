@@ -32,3 +32,5 @@
       when: influxdb_install == true
     - role: rtlsdr-airband
       when: airband_install == true
+    - role: rtlsdr-airband-alt
+      when: airband_alt_install == true
