@@ -34,3 +34,5 @@
       when: airband_install == true
     - role: rtlsdr-airband-alt
       when: airband_alt_install == true
+    - role: radarbox
+      when: radarbox_install == true

@@ -35,3 +35,10 @@
   user:
     name: ubuntu
     group: docker
+- name: Cron job to keep docker size down
+  cron:
+    name: "system prune"
+    minute: "0"
+    hour: "0"
+    state: "present"
+    job: docker system prune -f

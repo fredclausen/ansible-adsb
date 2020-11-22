@@ -1,0 +1,66 @@
+---
+- name: Deploy radarbox
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: radarbox
+        namespace: default
+        labels:
+          app: radarbox
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: radarbox
+        template:
+          metadata:
+            labels:
+              app: radarbox
+          spec:
+            containers:
+            - name: radarbox
+              image: "{{ radarbox_image }}"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: LAT
+                value: "{{ lat }}"
+              - name: LONG
+                value: "{{ lon }}"
+              - name: ALT
+                value: "{{ alt_meters }}"
+              - name: BEASTHOST
+                value: "{{ adsb_host }}"
+              - name: BEASTPORT
+                value: "{{ readsb_beastout_text_port }}"
+              - name: SHARING_KEY
+                value: "{{ radarbox_sharing_key }}"
+              ports:
+              - name: mlat
+                containerPort: 30105
+
+- name: Deploy radarbox service
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: radarbox
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ radarbox_ip }}"
+        selector:
+          app: radarbox
+        ports:
+        - protocol: TCP
+          port: "{{ radarbox_mlat_port }}"
+          targetPort: 30105
+          name : mlat
+        type: LoadBalancer 

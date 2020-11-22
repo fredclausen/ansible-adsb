@@ -1,0 +1,100 @@
+---
+- name: label node with RTLSDR dongle for rtlsdr-airband
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: v1
+      kind: Node
+      metadata:
+        labels:
+          acarshub: "usb"
+        name: "{{ acars_node }}"
+
+- name: Deploy acarshub
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: acarshub
+        namespace: default
+        labels:
+          app: acarshub
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: acarshub
+        template:
+          metadata:
+            labels:
+              app: acarshub
+          spec:
+            nodeSelector:
+              acarshub: usb
+            containers:
+            - name: acarshub
+              image: "fredclausen/acarshub:test"
+              imagePullPolicy: Always
+              securityContext:
+                privileged: true
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: FREQS_ACARS
+                value: "{{ acarshub_acars_freqs }}"
+              - name: FREQS_VDLM
+                value: "{{ acarshub_vdlm_freqs }}"
+              - name: GAIN
+                value: "{{ acarshub_gain }}"
+              - name: SERIAL_ACARS
+                value: "{{ acarshub_serial_acars }}"
+              - name: SERIAL_VDLM
+                value: "{{ acarshub_serial_vdlm }}"
+              - name: STATION_ID_ACARS
+                value: "{{ acarshub_stationid_acars }}"
+              - name: STATION_ID_VDLM
+                value: "{{ acarshub_stationid_vdlm }}"
+              - name: ENABLE_VDLM
+                value: "true"
+              - name: ENABLE_ACARS
+                value: "true"
+              - name: VERBOSE
+                value: "true"
+              - name: FEED
+                value: "true"
+              volumeMounts:
+              - mountPath: /run/acars
+                name: readsb-run
+                subPath: acars
+              - mountPath: /dev/bus/
+                name: usb
+            volumes:
+            - name: readsb-run
+              persistentVolumeClaim:
+                claimName: readsb-run
+            - name: usb
+              hostPath:
+                path: /dev/bus/
+- name: Deploy icecast service
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: acarshub
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ acarshub_ip }}"
+        selector:
+          app: acarshub
+        ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 80
+          name : output
+        type: LoadBalancer 
