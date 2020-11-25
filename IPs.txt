@@ -17,3 +17,5 @@ IPs
 192.168.31.223 airband
 192.168.31.224 airband alt
 192.168.31.225 radarbox
+192.168.31.226 acarshub
+192.168.31.227 grafana

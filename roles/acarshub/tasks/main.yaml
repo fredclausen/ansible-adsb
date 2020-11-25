@@ -1,3 +1,4 @@
+
 ---
 - name: label node with RTLSDR dongle for rtlsdr-airband
   k8s:
@@ -66,6 +67,8 @@
                 value: "true"
               - name: FEED
                 value: "true"
+              - name: TRIM_LOGS
+                value: ""
               volumeMounts:
               - mountPath: /run/acars
                 name: readsb-run

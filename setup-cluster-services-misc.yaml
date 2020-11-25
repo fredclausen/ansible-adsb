@@ -13,3 +13,5 @@
       when: guac_install == true
     - role: transmission
       when: transmission_install == true
+    - role: grafana
+      when: install_grafana == true

@@ -1,0 +1,61 @@
+---
+- name: Deploy grafana
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: grafana
+        namespace: default
+        labels:
+          app: grafana
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: grafana
+        template:
+          metadata:
+            labels:
+              app: grafana
+          spec:
+            nodeSelector:
+              acarshub: usb
+            containers:
+            - name: grafana
+              image: "grafana/grafana"
+              imagePullPolicy: Always
+              securityContext:
+                privileged: true
+              env:
+              volumeMounts:
+              - mountPath: /var/lib/grafana
+                name: readsb-run
+                subPath: grafana
+            volumes:
+            - name: readsb-run
+              persistentVolumeClaim:
+                claimName: readsb-run
+                
+- name: Deploy grafana service
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: grafana
+        namespace : default
+      spec:
+        loadBalancerIP: "{{ grafana_ip }}"
+        selector:
+          app: grafana
+        ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 3000
+          name : output
+        type: LoadBalancer 
