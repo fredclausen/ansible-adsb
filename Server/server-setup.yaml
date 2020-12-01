@@ -8,13 +8,13 @@
     - role: initial-server-setup
     - role: docker
 
-- hosts: nut-master
+- hosts: nutmaster
   gather_facts: yes
   become: yes
   roles:
     - role: nut-master
 
-- hosts: nut-slave
+- hosts: nutslave
   gather_facts: yes
   become: yes
   roles:

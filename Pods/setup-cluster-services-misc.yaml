@@ -4,7 +4,6 @@
   become: no
 
   roles:
-    - role: metal-lb   
     - role: cloudflared
       when: cloudflared_install == true
     - role: pihole
@@ -14,4 +13,4 @@
     - role: transmission
       when: transmission_install == true
     - role: grafana
-      when: install_grafana == true
+      when: garfana_install == true

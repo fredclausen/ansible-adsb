@@ -4,10 +4,12 @@
   gather_facts: no
   become: no
 
-  tasks:
+  pre_tasks:
   - name: Set workload facts
     set_fact:
       workload_state: absent
+  roles:
+    - role: metal-lb  
 
 - name: Install Misc Services
   import_playbook: setup-cluster-services-misc.yaml

@@ -19,6 +19,7 @@
       metadata:
         name: readsb
       spec:
+        storageClassName: nfs-class
         capacity:
           storage: 50Gi
         accessModes:
@@ -37,6 +38,7 @@
         name: readsb-run
         namespace: default
       spec:
+        storageClassName: nfs-class
         accessModes:
           - ReadWriteMany
         resources:

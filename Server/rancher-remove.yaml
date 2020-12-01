@@ -1,5 +1,11 @@
 ---
-- hosts: rancher
+- hosts: master
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: rancher-remove
+
+- hosts: node
   gather_facts: yes
   become: yes
   roles:

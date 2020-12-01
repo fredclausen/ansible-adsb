@@ -8,6 +8,7 @@
       metadata:
         name: guac
       spec:
+        storageClassName: nfs-class
         capacity:
           storage: 5Gi
         accessModes:
@@ -26,6 +27,7 @@
         name: guac-run
         namespace: default
       spec:
+        storageClassName: nfs-class
         accessModes:
           - ReadWriteMany
         resources:

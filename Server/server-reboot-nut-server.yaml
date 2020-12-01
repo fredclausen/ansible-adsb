@@ -1,5 +1,5 @@
 ---
-- hosts: nut-master
+- hosts: nutmaster
   gather_facts: yes
   become: yes
   tasks:

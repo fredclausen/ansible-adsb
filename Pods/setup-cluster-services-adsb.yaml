@@ -1,13 +1,8 @@
 ---
-## ansible-playbook -i inventory/inventory setup-cluster-services.yaml --extra-vars '{"flag":"apply -f"}' to apply/update configs
-## ansible-playbook -i inventory/inventory setup-cluster-services.yaml --extra-vars '{"flag":"delete -f"}' to delete configs
-
 - hosts: localhost
   gather_facts: no
   become: no
   roles:
-    roles:
-    - role: metal-lb  
     - role: readsb-proto
       when: readsb_install == true
     - role: dump978
@@ -32,9 +27,9 @@
       when: influxdb_install == true
     - role: rtlsdr-airband
       when: airband_install == true
-    - role: rtlsdr-airband-alt
-      when: airband_alt_install == true
     - role: radarbox
       when: radarbox_install == true
     - role: rawflight
       when: rawflight_install == true
+    - role: acarshub
+      when: acarshub_install == true

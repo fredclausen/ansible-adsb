@@ -8,6 +8,7 @@
       metadata:
         name: pihole
       spec:
+        storageClassName: nfs-class
         capacity:
           storage: 5Gi
         accessModes:
@@ -26,6 +27,7 @@
         name: pihole-etc
         namespace: default
       spec:
+        storageClassName: nfs-class
         accessModes:
           - ReadWriteMany
         resources:
@@ -58,7 +60,7 @@
             containers:
             - name: pihole
               image: "{{ pihole_image }}"
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               env:
               - name: TZ
                 value: "{{ timezone }}"
