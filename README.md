@@ -1,4 +1,6 @@
 # ansible-adsb
+
+**THIS README IS OUT OF DATE WITH CHANGES MADE 11/30. k3s UPDATES INCOMING + UPDATING THIS WITH THE CURRENT METHOD**
  
 This repository hosts [ansible](https://www.ansible.com) playbooks for deploying a full ADSB re-streaming site to various ADSB websites in to a [rancher](https://rancher.com) kubernetes cluster. Most of the focus is on deploying the workloads, however, there are included roles and playbooks for starting up the server nodes from scratch, deploying rancher, as well as a few useful and or fun workloads to deploy that aren't ADSB related.
 

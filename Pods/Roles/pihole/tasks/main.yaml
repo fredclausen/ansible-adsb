@@ -60,7 +60,7 @@
             containers:
             - name: pihole
               image: "{{ pihole_image }}"
-              imagePullPolicy: IfNotPresent
+              imagePullPolicy: Always
               env:
               - name: TZ
                 value: "{{ timezone }}"
