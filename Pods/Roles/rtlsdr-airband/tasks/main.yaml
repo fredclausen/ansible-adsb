@@ -44,7 +44,7 @@
               - name: ICECAST_ADMIN_PASSWORD
                 value: "{{ airband_admin_password }}"
               - name: RTLSDRAIRBAND_CUSTOMCONFIG
-                value: ""
+                value: "true"
               - name: ICECAST_HOSTNAME
                 value: "{{ airband_hostname }}"
               - name: RTLSDRAIRBAND_RADIO_TYPE

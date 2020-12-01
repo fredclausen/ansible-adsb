@@ -1,0 +1,47 @@
+---
+- name: Fetch kubectl file
+  fetch:
+    flat: yes
+    src: /home/ubuntu/.kube/config
+    dest: ~/.kube/config
+
+- name: Download kubernetes dashboard
+  get_url: 
+    url: "https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml"
+    dest: "{{ role_path }}/files/"
+  delegate_to: 127.0.0.1
+
+- name: Deploy kubernetes dashboard
+  k8s:
+    state: "present"
+    src: "{{ role_path }}/files/recommended.yaml"
+  delegate_to: 127.0.0.1
+
+- name: Create kubernetes user
+  k8s:
+    state: "present"
+    definition:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: admin-user
+        namespace: kubernetes-dashboard
+  delegate_to: 127.0.0.1
+
+- name: Create kubernetes ClusterRoleBinding
+  k8s:
+    state: "present"
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: admin-user
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-admin
+      subjects:
+      - kind: ServiceAccount
+        name: admin-user
+        namespace: kubernetes-dashboard
+  delegate_to: 127.0.0.1

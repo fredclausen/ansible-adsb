@@ -8,6 +8,15 @@
   - name: Set workload facts
     set_fact:
       workload_state: present
+  - name: Storage class 
+    k8s:
+      state: "{{ workload_state }}"
+      definition:
+        kind: StorageClass
+        apiVersion: storage.k8s.io/v1
+        metadata:
+          name: nfs-class
+        provisioner: kubernetes.io/fake-nfs
   roles:
     - role: metal-lb  
     

@@ -2,7 +2,7 @@
 192.168.31.30 new_hostname=cluster-master01
 
 [node]
-192.168.31.31 new_hostname=cluster-master01
+192.168.31.31 new_hostname=cluster-worker01
 192.168.31.32 new_hostname=cluster-worker02
 192.168.31.33 new_hostname=cluster-worker03
 192.168.31.34 new_hostname=cluster-worker04

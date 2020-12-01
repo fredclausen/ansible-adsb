@@ -30,9 +30,7 @@ do
                ansible-playbook -i inventory/inventory --extra-vars "@group_vars/all.yaml" server/rancher-node-setup.yaml;;
 		[dD]* ) echo "Setting up k3s cluster"
 		       ansible-playbook -i inventory/inventory --extra-vars "@group_vars/all.yaml" k3s/site.yml
-		       rm -f ~/.kube/config
-		       scp $USER@$MASTER_IP:~/.kube/config ~/.kube/config
-		       kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml;;
+		       ansible-playbook -i inventory/inventory --extra-vars "@group_vars/all.yaml" server/k3s-setup.yaml;;
 		[eE]* ) echo "Deleting rancher cluster"
                ansible-playbook -i inventory/inventory --extra-vars "@group_vars/all.yaml" server/rancher-remove.yaml;;
         [fF]* ) echo "Deleting k3s cluster"
