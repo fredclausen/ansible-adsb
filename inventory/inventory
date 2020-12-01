@@ -10,6 +10,11 @@
 192.168.31.36 new_hostname=cluster-worker05
 192.168.31.37 new_hostname=cluster-worker06
 
+[builders]
+192.168.31.27 new_hostname=build-arm32
+192.168.31.28 new_hostname=build-arm64
+192.168.31.29 new_hostname=build-amd64
+
 [rancher]
 192.168.31.30
 

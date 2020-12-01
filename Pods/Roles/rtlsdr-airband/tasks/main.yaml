@@ -44,7 +44,7 @@
               - name: ICECAST_ADMIN_PASSWORD
                 value: "{{ airband_admin_password }}"
               - name: RTLSDRAIRBAND_CUSTOMCONFIG
-                value: "true"
+                value: ""
               - name: ICECAST_HOSTNAME
                 value: "{{ airband_hostname }}"
               - name: RTLSDRAIRBAND_RADIO_TYPE
@@ -65,6 +65,10 @@
                 value: "{{ airband_station1_name }}"
               - name: RTLSDRAIRBAND_GENRE
                 value: "{{ airband_station1_genre }}"
+              - name: PORT
+                value: "8000"
+              - name: SQUELCH
+                value: ""
               volumeMounts:
               - mountPath: /run/rtlsdr-airband
                 name: readsb-run
@@ -94,7 +98,7 @@
           app: rtlsdr-airband
         ports:
         - protocol: TCP
-          port: "{{ airband_port }}"
+          port: 8000
           targetPort: 8000
           name : output
         type: LoadBalancer 
