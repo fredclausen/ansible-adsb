@@ -7,6 +7,7 @@ echo "Welcome to server setup and maintence"
 
 while true
 do
+	echo "Select z) To exit"
 	echo "Select a) To provision servers"
 	echo "Select b) To install Rancher"
 	echo "Select c) To install Rancher cluster to the nodes"
@@ -17,7 +18,8 @@ do
 	echo "Select h) To update servers"
 	echo "Select i) To setup cluster pods"
 	echo "Select j) To remove cluster pods"
-	echo "Select k) To exit"
+	echo "Select k) To reboot all cluster nodes"
+	
 	read -p "Enter selection " answer
 
 	case $answer in
@@ -43,7 +45,9 @@ do
                ansible-playbook -i inventory/inventory --extra-vars "@group_vars/all.yaml" pods/setup-cluster-services.yaml;;
         [jJ]* ) echo "Removing cluster pods"
                ansible-playbook -i inventory/inventory --extra-vars "@group_vars/all.yaml" pods/remove-cluster-services.yaml;;
-		[kK]* ) echo "Exiting!"
+		[zZ]* ) echo "Exiting!"
 		       exit;;
+		[kK]* ) echo "Rebooting nodes"
+                ansible k3s_cluster -i inventory/inventory -b -m reboot -a
 	esac
 done
