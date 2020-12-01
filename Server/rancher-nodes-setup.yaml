@@ -4,7 +4,7 @@
   become: yes
   roles:
     - role: cluster-master-node
-- hosts: workers
+- hosts: node
   gather_facts: yes
   become: yes
   roles:

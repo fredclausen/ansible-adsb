@@ -1,0 +1,4 @@
+---
+- name: Deleting rancher cluster
+  script: "{{ role_path }}"/files/cleanup.sh
+

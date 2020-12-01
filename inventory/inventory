@@ -1,14 +1,18 @@
 [master]
 192.168.31.30 new_hostname=cluster-master01
-192.168.31.31 new_hostname=cluster-master02
 
-[workers]
-192.168.31.32 new_hostname=cluster-worker01
-192.168.31.33 new_hostname=cluster-worker02
-192.168.31.34 new_hostname=cluster-worker03
-192.168.31.35 new_hostname=cluster-worker04
-192.168.31.36 new_hostname=cluster-worker05
-192.168.31.37 new_hostname=cluster-worker06
+[node]
+192.168.31.31 new_hostname=cluster-master01
+192.168.31.32 new_hostname=cluster-worker02
+192.168.31.33 new_hostname=cluster-worker03
+192.168.31.34 new_hostname=cluster-worker04
+192.168.31.35 new_hostname=cluster-worker05
+192.168.31.36 new_hostname=cluster-worker06
+192.168.31.37 new_hostname=cluster-worker07
+
+[k3s_cluster:children]
+master
+node
 
 [builders]
 192.168.31.27 new_hostname=build-arm32

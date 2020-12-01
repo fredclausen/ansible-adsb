@@ -19,9 +19,3 @@
   become: yes
   roles:
     - role: nut-slave
-
-- hosts: rancher
-  gather_facts: yes
-  become: yes
-  roles:
-    - role: rancher
