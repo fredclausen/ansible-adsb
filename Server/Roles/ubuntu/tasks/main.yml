@@ -9,6 +9,7 @@
     - ansible_distribution == 'Ubuntu'
     - ( ansible_facts.architecture is search("arm") or
         ansible_facts.architecture is search("aarch64") )
+    - skip_cmd != 'true'    
 
 - name: Reboot to enable cgroups for Ubuntu on ARM
   reboot:

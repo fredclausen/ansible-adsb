@@ -19,6 +19,7 @@ do
 	echo "Select i) To setup cluster pods"
 	echo "Select j) To remove cluster pods"
 	echo "Select k) To reboot all cluster nodes"
+	echo "Select l) To deploy test.yaml"
 	
 	read -p "Enter selection " answer
 
@@ -48,6 +49,8 @@ do
 		[zZ]* ) echo "Exiting!"
 		       exit;;
 		[kK]* ) echo "Rebooting nodes"
-                ansible k3s_cluster -i inventory/inventory -b -m reboot -a
+                ansible k3s_cluster -i inventory/inventory -b -m reboot -a;;
+        [lL]* ) echo "Deploying test.yaml"
+                ansible-playbook -i inventory/inventory --extra-vars="workload_state=present" --extra-vars "@group_vars/all.yaml" pods/test.yaml;;        
 	esac
 done

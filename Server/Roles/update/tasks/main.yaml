@@ -15,18 +15,21 @@
 - name: Install required packages for the system
   apt:
     pkg: 
-     - nfs-common
-     - net-tools
-     - apt-transport-https
-     - ca-certificates
-     - curl
-     - gnupg-agent
-     - software-properties-common
-     - python3-pip
-     - nut
-     - rtl-sdr
-     - librtlsdr-dev
-     #- python3
+      - nfs-common
+      - net-tools
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+      - python3-pip
+      - nut
+      - rtl-sdr
+      - librtlsdr-dev
+      - glusterfs-server 
+      - glusterfs-client
+      - parted
+      #- python3
     state: present
 
   # get a list of packages that have updates

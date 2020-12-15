@@ -18,6 +18,9 @@
       - nut
       - rtl-sdr
       - librtlsdr-dev
+      - glusterfs-server 
+      - glusterfs-client
+      - parted
       #- python3
     state: present
 - name: Install required python modules

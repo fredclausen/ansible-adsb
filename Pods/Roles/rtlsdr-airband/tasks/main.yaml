@@ -69,6 +69,12 @@
                 value: "8000"
               - name: SQUELCH
                 value: ""
+              - name: LOG_SCANNED_ACTIVITY
+                value: "true"
+              - name: FFT_SIZE
+                value: "4096"
+              - name: SAMPLE_RATE
+                value: "2.56"
               volumeMounts:
               - mountPath: /run/rtlsdr-airband
                 name: readsb-run

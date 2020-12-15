@@ -132,6 +132,8 @@
                 subPath: collectd-readsb
               - mountPath: /dev/bus/
                 name: usb
+              - mountPath: /etc/mtab
+                name: mtab
             volumes:
             - name: readsb-run
               persistentVolumeClaim:
@@ -139,6 +141,10 @@
             - name: usb
               hostPath:
                 path: /dev/bus/
+            - name: mtab
+              hostPath:
+                path: /etc/mtab
+                type: File               
 
 - name: Deploy readsb service
   k8s:

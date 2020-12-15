@@ -38,7 +38,7 @@
               acarshub: usb
             containers:
             - name: acarshub
-              image: "fredclausen/acarshub:test"
+              image: "fredclausen/acarshub:latest"
               imagePullPolicy: Always
               securityContext:
                 privileged: true
@@ -63,12 +63,16 @@
                 value: "true"
               - name: ENABLE_ACARS
                 value: "true"
-              - name: VERBOSE
+              - name: ENABLE_WEB
                 value: "true"
               - name: FEED
                 value: "true"
               - name: TRIM_LOGS
+                value: "true"
+              - name: QUIET_LOGS
                 value: ""
+              - name: DEBUG_LOGGING
+                value: "True"
               volumeMounts:
               - mountPath: /run/acars
                 name: readsb-run
