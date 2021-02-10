@@ -21,7 +21,9 @@
       - glusterfs-server 
       - glusterfs-client
       - parted
+      - cifs-utils
       #- python3
+      - pi-bluetooth
     state: present
 - name: Install required python modules
   pip:

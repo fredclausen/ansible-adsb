@@ -1,0 +1,71 @@
+
+---
+- name: Deploy mariadb
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: mariadb
+        namespace: default
+        labels:
+          app: mariadb
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: mariadb
+        template:
+          metadata:
+            labels:
+              app: mariadb
+          spec:
+            containers:
+            - name: mariadb
+              image: "mariadb:latest"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "America/Denver"
+              - name: MYSQL_ROOT_PASSWORD
+                value: yourrootpasswordhere
+              - name: MYSQL_USER
+                value: homeassistant
+              - name: MYSQL_PASSWORD
+                value: yourstrongpasswordhere
+              - name: MYSQL_DATABASE
+                value: homeassistant
+              volumeMounts:
+                - mountPath: /var/lib/mysql
+                  name: readsb-run
+                  subPath: mariadb
+            volumes:
+            - name: readsb-run
+              persistentVolumeClaim:
+                claimName: readsb-run
+- name: Deploy rest980 service
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: mariadb
+        namespace : default
+      spec:
+        loadBalancerIP: 192.168.31.203
+        selector:
+          app: mariadb
+        ports:
+        - protocol: TCP
+          port: 3306
+          targetPort: 3306
+          name : output
+        - protocol: TCP
+          port: 3307
+          targetPort: 3307
+          name: other
+        type: LoadBalancer

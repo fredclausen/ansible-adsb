@@ -1,27 +1,33 @@
 [master]
-192.168.31.30 new_hostname=cluster-master01
+192.168.31.30 new_hostname=cluster-master01 ansible_user=ubuntu
 
 [node]
-192.168.31.31 new_hostname=cluster-worker01
-192.168.31.32 new_hostname=cluster-worker02
-192.168.31.33 new_hostname=cluster-worker03
-192.168.31.34 new_hostname=cluster-worker04
-192.168.31.35 new_hostname=cluster-worker05
-192.168.31.36 new_hostname=cluster-worker06
-192.168.31.37 new_hostname=cluster-worker07
+192.168.31.31 new_hostname=cluster-worker01 ansible_user=ubuntu
+192.168.31.32 new_hostname=cluster-worker02 ansible_user=ubuntu
+192.168.31.33 new_hostname=cluster-worker03 ansible_user=ubuntu
+192.168.31.34 new_hostname=cluster-worker04 ansible_user=ubuntu
+192.168.31.35 new_hostname=cluster-worker05 ansible_user=ubuntu
+192.168.31.36 new_hostname=cluster-worker06 ansible_user=ubuntu
+192.168.31.37 new_hostname=cluster-worker07 ansible_user=ubuntu
+192.168.31.38 new_hostname=cluster-worker08 ansible_user=ubuntu
+192.168.31.39 new_hostname=cluster-worker09 ansible_user=ubuntu
+192.168.31.40 new_hostname=cluster-worker10 ansible_user=ubuntu
+192.168.31.41 new_hostname=cluster-worker11 ansible_user=ubuntu
+192.168.31.42 new_hostname=cluster-worker12 ansible_user=ubuntu
+192.168.31.43 new_hostname=cluster-worker13 ansible_user=ubuntu
+192.168.31.44 new_hostname=cluster-worker14 ansible_user=ubuntu
 
 [k3s_cluster:children]
 master
 node
 
 [builders]
-192.168.31.27 new_hostname=build-arm32
-192.168.31.28 new_hostname=build-arm64
-192.168.31.29 new_hostname=build-amd64
+192.168.31.27 new_hostname=build-arm32 ansible_user=ubuntu
+192.168.31.28 new_hostname=build-arm64 ansible_user=ubuntu
 
 [gluster_cluster]
-192.168.31.70 new_hostname=storage-01
-192.168.31.71 new_hostname=storage-02
+192.168.31.70 new_hostname=storage-01 ansible_user=root
+192.168.31.71 new_hostname=storage-02 ansible_user=root
 
 [rancher]
 192.168.31.30
@@ -37,5 +43,12 @@ node
 192.168.31.35
 192.168.31.36
 192.168.31.37
+192.168.31.38
+192.168.31.39
+192.168.31.40
+192.168.31.41
+192.168.31.42
+192.168.31.43
+192.168.31.44
 192.168.31.70
 192.168.31.71

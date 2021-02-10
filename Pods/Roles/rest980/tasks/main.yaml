@@ -1,0 +1,117 @@
+
+---
+- name: Deploy rest980
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: rest980
+        namespace: default
+        labels:
+          app: rest980
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: rest980
+        template:
+          metadata:
+            labels:
+              app: rest980
+          spec:
+            containers:
+            - name: rest980
+              image: "fredclausen/rest980:latest"
+              imagePullPolicy: Always
+              env:
+              - name: BLID
+                value: "3173C22400127710"
+              - name: PASSWORD
+                value: ':1:1543345630:SMMshbI8j4XzrZQC'
+              - name: ROBOT_IP
+                value: "192.168.31.166"
+              - name: FIRMWARE_VERSION
+                value: '2'
+
+- name: Deploy rest980 service
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: rest980
+        namespace : default
+      spec:
+        loadBalancerIP: 192.168.31.207
+        selector:
+          app: rest980
+        ports:
+        - protocol: TCP
+          port: 3000
+          targetPort: 3000
+          name : output
+        type: LoadBalancer
+
+- name: Deploy rest980-2
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: rest980-2
+        namespace: default
+        labels:
+          app: rest980-2
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: rest980-2
+        template:
+          metadata:
+            labels:
+              app: rest980-2
+          spec:
+            containers:
+            - name: rest980-2
+              image: "fredclausen/rest980:latest"
+              imagePullPolicy: Always
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: BLID
+                value: "3143C91040431760"
+              - name: PASSWORD
+                value: ':1:1536701001:7ZfCTsCP7zgfLON0'
+              - name: ROBOT_IP
+                value: "192.168.31.55"
+              - name: FIRMWARE_VERSION
+                value: '2'
+
+- name: Deploy rest980-2 service
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: rest980-2
+        namespace : default
+      spec:
+        loadBalancerIP: 192.168.31.206
+        selector:
+          app: rest980-2
+        ports:
+        - protocol: TCP
+          port: 3000
+          targetPort: 3000
+          name : output
+        type: LoadBalancer

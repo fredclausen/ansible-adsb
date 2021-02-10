@@ -41,6 +41,8 @@
                 value: "{{ mlat_host }}"
               - name: MLATPORT
                 value: "{{ mlat_out_port_text }}"
+              - name: HEYWHATSTHAT_PANORAMA_ID
+                value: "NN6R7EXG"
               ports:
               - name: web
                 containerPort: 80

@@ -50,7 +50,11 @@
               - name: FREQS_VDLM
                 value: "{{ acarshub_vdlm_freqs }}"
               - name: GAIN
-                value: "{{ acarshub_gain }}"
+                value:
+              - name: GAIN_ACARS
+                value: "{{ acarshub_gain_acars }}"
+              - name: GAIN_VDLM
+                value: "{{ acarshub_gain_vdlm }}"
               - name: SERIAL_ACARS
                 value: "{{ acarshub_serial_acars }}"
               - name: SERIAL_VDLM
@@ -66,13 +70,19 @@
               - name: ENABLE_WEB
                 value: "true"
               - name: FEED
-                value: "true"
-              - name: TRIM_LOGS
-                value: "true"
+                value: "True"
               - name: QUIET_LOGS
-                value: ""
+                value: "True"
               - name: DEBUG_LOGGING
                 value: "True"
+              - name: EXTREME_LOGGING
+                value: ""
+              - name: DB_SAVEALL
+                value: ""
+              - name: TAR1090_URL
+                value: "http://192.168.31.214/"
+              - name: IATA_OVERRIDE
+                value: "UP|UPS|United Parcel Service;GS|FTH|Mountain Aviation (Foothills)"
               volumeMounts:
               - mountPath: /run/acars
                 name: readsb-run
@@ -104,4 +114,4 @@
           port: 80
           targetPort: 80
           name : output
-        type: LoadBalancer 
+        type: LoadBalancer

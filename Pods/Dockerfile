@@ -1,0 +1,46 @@
+FROM nodered/node-red
+RUN npm install node-red-contrib-actionflows \
+    node-red-contrib-home-assistant-websocket \
+    node-red-contrib-stoptimer \
+    node-red-contrib-time-range-switch \
+    node-red-contrib-timecheck \
+    node-red-node-timeswitch \
+    node-red-contrib-actionflows \
+    node-red-contrib-alexa-home-skill \
+    node-red-contrib-bigtimer \
+    node-red-contrib-cast \
+    node-red-contrib-counter \
+    node-red-contrib-date \
+    node-red-contrib-http-request \
+    node-red-contrib-ical-events \
+    node-red-contrib-influxdb \
+    node-red-contrib-interval-length \
+    node-red-contrib-looptimer \
+    node-red-contrib-modbus \
+    node-red-contrib-moment \
+    node-red-contrib-opentimestamps \
+    node-red-contrib-state-machine \
+    node-red-contrib-statistics \
+    node-red-contrib-stoptimer \
+    node-red-contrib-sun-position \
+    node-red-contrib-sunevents \
+    node-red-contrib-time-range-switch \
+    node-red-contrib-timecheck \
+    node-red-contrib-traffic \
+    node-red-dashboard \
+    node-red-node-base64 \
+    node-red-node-email \
+    node-red-node-feedparser \
+    node-red-node-geofence \
+    node-red-node-msgpack \
+    node-red-node-pi-gpio \
+    node-red-node-ping \
+    node-red-node-random \
+    node-red-node-rbe \
+    node-red-node-sentiment \
+    node-red-node-serialport \
+    node-red-node-smooth \
+    node-red-node-suncalc \
+    node-red-node-tail \
+    node-red-node-twitter \
+    thethingbox-node-timestamp

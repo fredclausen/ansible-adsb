@@ -29,7 +29,9 @@
       - glusterfs-server 
       - glusterfs-client
       - parted
+      - cifs-utils
       #- python3
+      - pi-bluetooth
     state: present
 
   # get a list of packages that have updates

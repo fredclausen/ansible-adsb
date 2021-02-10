@@ -14,3 +14,13 @@
       when: transmission_install == true
     - role: grafana
       when: garfana_install == true
+    - role: wireguard
+      when: wireguard_install == true
+    - role: rest_980
+      when: rest_980_install == true
+    - role: node_red
+      when: node_red_install == true
+    - role: homeassistant
+      when: homeassistant_install == true
+    - role: mariadb
+      when: mariadb_install == true
