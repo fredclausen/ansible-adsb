@@ -20,3 +20,5 @@
       when: homeassistant_install == true
     - role: mariadb
       when: mariadb_install == true
+    - role: webproxy
+      when: webproxy_install == true

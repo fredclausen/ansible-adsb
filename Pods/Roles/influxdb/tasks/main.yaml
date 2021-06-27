@@ -1,5 +1,5 @@
 ---
-- name: Deploy influxdb
+- name: Deploy InfluxDB
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -41,7 +41,7 @@
               persistentVolumeClaim:
                 claimName: readsb-run
 
-- name: Deploy influxdb service
+- name: Deploy InfluxDB Service
   k8s:
     state: "{{ workload_state }}"
     definition:

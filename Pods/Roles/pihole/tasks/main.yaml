@@ -1,41 +1,5 @@
 ---
-- name: Deploy pihole pv
-  k8s:
-    state: "{{ workload_state }}"
-    definition:
-      apiVersion: v1
-      kind: PersistentVolume
-      metadata:
-        namespace: dns
-        name: pihole
-      spec:
-        storageClassName: nfs-class
-        capacity:
-          storage: 5Gi
-        accessModes:
-          - ReadWriteMany
-        nfs:
-          server: "{{ nfs_share_ip }}"
-          path: "{{ nfs_share_path }}"
-
-- name: Deploy pihole pvc
-  k8s:
-    state: "{{ workload_state }}"
-    definition:
-      kind: PersistentVolumeClaim
-      apiVersion: v1
-      metadata:
-        namespace: dns
-        name: pihole-etc
-      spec:
-        storageClassName: nfs-class
-        accessModes:
-          - ReadWriteMany
-        resources:
-          requests:
-            storage: 1Gi
-
-- name: Deploy pihole
+- name: Deploy Pi Hole
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -88,7 +52,7 @@
               persistentVolumeClaim:
                 claimName: pihole-etc
 
-- name: Deploy pihole service UDP
+- name: Deploy Pi Hole Service DNS
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -110,7 +74,7 @@
           name : dns
         type: LoadBalancer
 
-- name: Deploy pihole service TCP
+- name: Deploy Pi Hole Service Web
   k8s:
     state: "{{ workload_state }}"
     definition:

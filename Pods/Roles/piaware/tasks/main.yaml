@@ -1,5 +1,5 @@
 ---
-- name: Deploy piaware
+- name: Deploy PiAware
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -58,7 +58,7 @@
               - name: uatjson
                 containerPort: 30979
 
-- name: Deploy piaware service
+- name: Deploy PiAware Service
   k8s:
     state: "{{ workload_state }}"
     definition:

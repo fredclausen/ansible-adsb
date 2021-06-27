@@ -1,41 +1,5 @@
 ---
-- name: Deploy guac pv
-  k8s:
-    state: "{{ workload_state }}"
-    definition:
-      apiVersion: v1
-      kind: PersistentVolume
-      metadata:
-        namespace: services
-        name: guac
-      spec:
-        storageClassName: nfs-class
-        capacity:
-          storage: 5Gi
-        accessModes:
-          - ReadWriteMany
-        nfs:
-          server: "{{ nfs_share_ip }}"
-          path: "{{ nfs_share_path }}"
-
-- name: Deploy guac pvc
-  k8s:
-    state: "{{ workload_state }}"
-    definition:
-      kind: PersistentVolumeClaim
-      apiVersion: v1
-      metadata:
-        name: guac-run
-        namespace: services
-      spec:
-        storageClassName: nfs-class
-        accessModes:
-          - ReadWriteMany
-        resources:
-          requests:
-            storage: 5Gi
-
-- name: Deploy guac
+- name: Deploy Guac
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -78,7 +42,7 @@
               persistentVolumeClaim:
                 claimName: guac-run
 
-- name: Deploy guac service
+- name: Deploy Guac Service
   k8s:
     state: "{{ workload_state }}"
     definition:

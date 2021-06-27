@@ -1,59 +1,6 @@
 
 ---
-- name: Create local storage class
-  k8s:
-    state: "{{ workload_state }}"
-    definition:
-      kind: StorageClass
-      apiVersion: storage.k8s.io/v1
-      metadata:
-        name: my-local-storage
-        namespace: adsb
-      provisioner: kubernetes.io/no-provisioner
-      volumeBindingMode: WaitForFirstConsumer
-- name: Create PV for ACARSHub
-  k8s:
-    state: "{{ workload_state }}"
-    definition:
-      apiVersion: v1
-      kind: PersistentVolume
-      metadata:
-        name: acarshub
-        namespace: adsb
-      spec:
-        capacity:
-          storage: 1Gi
-        accessModes:
-        - ReadWriteOnce
-        persistentVolumeReclaimPolicy: Retain
-        storageClassName: my-local-storage
-        local:
-          path: /home/ubuntu/acarshub
-        nodeAffinity:
-          required:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: In
-                values:
-                - cluster-worker02
-- name: Create PVC for ACARSHub
-  k8s:
-    state: "{{ workload_state }}"
-    definition:
-      apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
-        name: acarshub-pvc
-        namespace: adsb
-      spec:
-        accessModes:
-        - ReadWriteOnce
-        storageClassName: my-local-storage
-        resources:
-          requests:
-            storage: 1Gi
-- name: label node with RTLSDR dongle for rtlsdr-airband
+- name: Label node with RTLSDR dongle for ACARS Hub
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -64,7 +11,7 @@
           acarshub: "usb"
         name: "{{ acars_node }}"
 
-- name: Deploy acarshub
+- name: Deploy ACARS Hub
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -160,7 +107,7 @@
             - name: usb
               hostPath:
                 path: /dev/bus/
-- name: Deploy ACARS Hub service
+- name: Deploy ACARS Hub Service
   k8s:
     state: "{{ workload_state }}"
     definition:

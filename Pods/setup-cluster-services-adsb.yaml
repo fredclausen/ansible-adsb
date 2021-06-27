@@ -29,7 +29,5 @@
       when: airband_install == true
     - role: radarbox
       when: radarbox_install == true
-    - role: rawflight
-      when: rawflight_install == true
     - role: acarshub
       when: acarshub_install == true

@@ -1,5 +1,5 @@
 ---
-- name: Deploy opensky
+- name: Deploy OpenSky
   k8s:
     state: "{{ workload_state }}"
     definition:

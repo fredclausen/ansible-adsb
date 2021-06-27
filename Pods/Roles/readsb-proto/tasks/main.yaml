@@ -1,5 +1,5 @@
 ---
-- name: label node with RTLSDR dongle for readsb
+- name: label node with RTLSDR dongle for ADSB
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -11,7 +11,7 @@
         name: "{{ readsb_node }}"
         namespace: adsb
 
-- name: Deploy readsb
+- name: Deploy readsb-protobuf
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -114,7 +114,7 @@
                 path: /etc/mtab
                 type: File               
 
-- name: Deploy readsb service
+- name: Deploy readsb-protobuf Service
   k8s:
     state: "{{ workload_state }}"
     definition:

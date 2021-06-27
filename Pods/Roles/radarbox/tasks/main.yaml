@@ -1,5 +1,5 @@
 ---
-- name: Deploy radarbox
+- name: Deploy Radar Box
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -50,7 +50,7 @@
               - name: mlat
                 containerPort: 30105
 
-- name: Deploy radarbox service
+- name: Deploy Radar Box Service
   k8s:
     state: "{{ workload_state }}"
     definition:

@@ -81,3 +81,131 @@
         resources:
           requests:
             storage: 50Gi
+
+- name: Create local storage class
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: StorageClass
+      apiVersion: storage.k8s.io/v1
+      metadata:
+        name: my-local-storage
+        namespace: adsb
+      provisioner: kubernetes.io/no-provisioner
+      volumeBindingMode: WaitForFirstConsumer
+
+- name: Create PV for ACARSHub
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: acarshub
+        namespace: adsb
+      spec:
+        capacity:
+          storage: 1Gi
+        accessModes:
+        - ReadWriteOnce
+        persistentVolumeReclaimPolicy: Retain
+        storageClassName: my-local-storage
+        local:
+          path: /home/ubuntu/acarshub
+        nodeAffinity:
+          required:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - cluster-worker02
+
+- name: Create PVC for ACARSHub
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: acarshub-pvc
+        namespace: adsb
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        storageClassName: my-local-storage
+        resources:
+          requests:
+            storage: 1Gi
+
+- name: Deploy guac pv
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        namespace: services
+        name: guac
+      spec:
+        storageClassName: nfs-class
+        capacity:
+          storage: 5Gi
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          server: "{{ nfs_share_ip }}"
+          path: "{{ nfs_share_path }}"
+
+- name: Deploy guac pvc
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: guac-run
+        namespace: services
+      spec:
+        storageClassName: nfs-class
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 5Gi
+
+- name: Deploy pihole pv
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        namespace: dns
+        name: pihole
+      spec:
+        storageClassName: nfs-class
+        capacity:
+          storage: 5Gi
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          server: "{{ nfs_share_ip }}"
+          path: "{{ nfs_share_path }}"
+
+- name: Deploy pihole pvc
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        namespace: dns
+        name: pihole-etc
+      spec:
+        storageClassName: nfs-class
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 1Gi

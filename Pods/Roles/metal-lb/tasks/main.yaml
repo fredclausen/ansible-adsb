@@ -1,25 +1,25 @@
 ---
-- name: Download metallb remote namespace config
+- name: Download MetalLB Remote Namespace Config
   get_url: 
     url: "https://raw.githubusercontent.com/metallb/metallb/{{ metallb_version }}/manifests/namespace.yaml"
     dest: "{{ role_path }}/files/"
 
-- name: Download metallb remote config
+- name: Download MetalLB Remote Config
   get_url: 
     url: "https://raw.githubusercontent.com/metallb/metallb/{{ metallb_version }}/manifests/metallb.yaml"
     dest: "{{ role_path }}/files/"
 
-- name: Deploy metallb name space
+- name: Deploy MetalLB Namespace
   k8s:
     state: "{{ workload_state }}"
     src: "{{ role_path }}/files/namespace.yaml"
 
-- name: Deploy metallb
+- name: Deploy MetalLB
   k8s:
     state: "{{ workload_state }}"
     src: "{{ role_path }}/files/metallb.yaml"
 
-- name: Deploy Metallb secretkey
+- name: Deploy MetalLB Secret Key
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -32,7 +32,7 @@
       data:
         secretkey: "{{ metallb_secretkey }}"
 
-- name: Deploy Metallb config
+- name: Deploy MetalLB Config
   k8s:
     state: "{{ workload_state }}"
     definition:

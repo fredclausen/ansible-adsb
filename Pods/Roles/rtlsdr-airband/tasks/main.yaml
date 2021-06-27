@@ -91,7 +91,7 @@
               hostPath:
                 path: /dev/bus/
 
-- name: Deploy icecast service
+- name: Deploy Icecast Service
   k8s:
     state: "{{ workload_state }}"
     definition:

@@ -50,7 +50,7 @@
               - name : mlat
                 containerPort: "{{ mlat_out_port }}"
 
-- name: Deploy MLAT service
+- name: Deploy MLAT Service
   k8s:
     state: "{{ workload_state }}"
     definition:

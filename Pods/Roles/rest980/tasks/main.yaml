@@ -38,7 +38,7 @@
               - name: FIRMWARE_VERSION
                 value: '2'
 
-- name: Deploy rest980 Downstairs service
+- name: Deploy rest980 Downstairs Service
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -98,7 +98,7 @@
               - name: FIRMWARE_VERSION
                 value: '2'
 
-- name: Deploy rest980 Upstairs service
+- name: Deploy rest980 Upstairs Service
   k8s:
     state: "{{ workload_state }}"
     definition:

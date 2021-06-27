@@ -1,5 +1,5 @@
 ---
-- name: Deploy cloudflared
+- name: Deploy Cloud Flared
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -43,7 +43,7 @@
                 containerPort: 49312
 
 
-- name: Deploy cloudflared service
+- name: Deploy Cloud Flared Service
   k8s:
     state: "{{ workload_state }}"
     definition:

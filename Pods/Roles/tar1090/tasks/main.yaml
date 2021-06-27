@@ -56,7 +56,7 @@
               persistentVolumeClaim:
                 claimName: readsb-run
 
-- name: Deploy tar1090 service
+- name: Deploy tar1090 Service
   k8s:
     state: "{{ workload_state }}"
     definition:

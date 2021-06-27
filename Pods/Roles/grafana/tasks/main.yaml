@@ -1,5 +1,5 @@
 ---
-- name: Deploy grafana
+- name: Deploy Grafana
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -41,7 +41,7 @@
               persistentVolumeClaim:
                 claimName: guac-run
                 
-- name: Deploy grafana service
+- name: Deploy Grafana Service
   k8s:
     state: "{{ workload_state }}"
     definition:

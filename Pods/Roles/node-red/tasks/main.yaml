@@ -1,6 +1,6 @@
 
 ---
-- name: Deploy node-red
+- name: Deploy Node Red
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -40,7 +40,7 @@
               persistentVolumeClaim:
                 claimName: homeautomation-run
 
-- name: Deploy node red service
+- name: Deploy Node Red Service
   k8s:
     state: "{{ workload_state }}"
     definition:

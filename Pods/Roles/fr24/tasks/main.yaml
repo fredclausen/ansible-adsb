@@ -1,5 +1,5 @@
 ---
-- name: Deploy FR24
+- name: Deploy Flight Radar 24
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -44,7 +44,7 @@
               - name: raw-out
                 containerPort: 30334
 
-- name: Deploy FR24 service
+- name: Deploy Flight Radar Service
   k8s:
     state: "{{ workload_state }}"
     definition:

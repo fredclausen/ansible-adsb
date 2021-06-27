@@ -1,5 +1,5 @@
 ---
-- name: Deploy planefinder
+- name: Deploy Plane Finder
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -44,7 +44,7 @@
               - name: echo
                 containerPort: 30054
 
-- name: Deploy planefinder service
+- name: Deploy Plane Finder Service
   k8s:
     state: "{{ workload_state }}"
     definition:

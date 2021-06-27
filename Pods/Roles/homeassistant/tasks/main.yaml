@@ -1,6 +1,6 @@
 
 ---
-- name: label node with Z-Wave Dongle
+- name: Label node with Z-Wave Dongle
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -11,7 +11,7 @@
           homeassistant: "usb"
         name: "{{ homeassistant_node }}"
 
-- name: Deploy homeassistant
+- name: Deploy Home Assistant
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -65,7 +65,7 @@
             - name: sys
               hostPath:
                 path: /sys/
-- name: Deploy homeassistant service
+- name: Deploy Home Assistant Service
   k8s:
     state: "{{ workload_state }}"
     definition:

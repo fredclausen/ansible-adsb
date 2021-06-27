@@ -1,5 +1,5 @@
 ---
-- name: label node with RTLSDR dongle for readsb
+- name: label node with RTLSDR dongle for Dump 978
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -11,7 +11,7 @@
           dump978: "usb"
         name: "{{ dump978_node }}"
 
-- name: Deploy dump978
+- name: Deploy Dump 978
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -65,7 +65,7 @@
               hostPath:
                 path: /dev/bus/
                 
-- name: Deploy dump978 service
+- name: Deploy Dump 978 Service
   k8s:
     state: "{{ workload_state }}"
     definition:
