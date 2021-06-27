@@ -1,6 +1,6 @@
 
 ---
-- name: Deploy mariadb
+- name: Deploy MariaDB
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -8,7 +8,7 @@
       kind: Deployment
       metadata:
         name: mariadb
-        namespace: default
+        namespace : homeautomation
         labels:
           app: mariadb
       spec:
@@ -23,6 +23,7 @@
             labels:
               app: mariadb
           spec:
+            hostname: "{{ mariadb_host }}"
             containers:
             - name: mariadb
               image: "mariadb:latest"
@@ -40,21 +41,21 @@
                 value: homeassistant
               volumeMounts:
                 - mountPath: /var/lib/mysql
-                  name: readsb-run
+                  name: homeautomation-run
                   subPath: mariadb
             volumes:
-            - name: readsb-run
+            - name: homeautomation-run
               persistentVolumeClaim:
-                claimName: readsb-run
-- name: Deploy rest980 service
+                claimName: homeautomation-run
+- name: Deploy MariaDB Service
   k8s:
     state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1
       metadata:
-        name: mariadb
-        namespace : default
+        name: "{{ mariadb_host }}"
+        namespace : homeautomation
       spec:
         loadBalancerIP: 192.168.31.203
         selector:

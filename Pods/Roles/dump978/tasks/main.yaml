@@ -6,6 +6,7 @@
       apiVersion: v1
       kind: Node
       metadata:
+        namespace: adsb
         labels:
           dump978: "usb"
         name: "{{ dump978_node }}"
@@ -18,7 +19,7 @@
       kind: Deployment
       metadata:
         name: dump978
-        namespace: default
+        namespace: adsb
         labels:
           app: dump978
       spec:
@@ -33,6 +34,7 @@
             labels:
               app: dump978
           spec:
+            hostname: "{{ uat_host }}"
             nodeSelector:
               dump978: usb
             containers:
@@ -70,10 +72,10 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: dump978
-        namespace : default
+        name: "{{ uat_host }}"
+        namespace: adsb
       spec:
-        loadBalancerIP: "{{ uat_host }}"
+        loadBalancerIP: "{{ uat_ip }}"
         selector:
           app: dump978
         ports:

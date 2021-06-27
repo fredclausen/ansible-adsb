@@ -2,8 +2,8 @@
 - hosts: all
   gather_facts: yes
   become: yes
-  serial: 1 # one host at a time
-  any_errors_fatal: true
-  max_fail_percentage: 0
+  #serial: 1 # one host at a time
+ # any_errors_fatal: true
+  #max_fail_percentage: 0
   roles:
     - role: update

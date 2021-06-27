@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: planefinder
-        namespace: default
+        namespace: adsb
         labels:
           app: planefinder
       spec:
@@ -22,6 +22,7 @@
             labels:
               app: planefinder
           spec:
+            hostname: "{{ planefinder_host }}"
             containers:
             - name: planefinder
               image: "{{ planefinder_image }}"
@@ -50,8 +51,8 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: planefinder
-        namespace : default
+        name: "{{ planefinder_host }}"
+        namespace: adsb
       spec:
         loadBalancerIP: "{{ planefinder_ip }}"
         selector:

@@ -27,8 +27,10 @@
     state: present
 - name: Install required python modules
   pip:
-    name: docker
-    state: present
+    name:
+      - docker
+      - openshift
+    state: latest
 - name: Set host-name for computer
   hostname:
     name: "{{new_hostname}}"

@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: adsbhub
-        namespace: default
+        namespace: adsb
         labels:
           app: adsbhub
       spec:
@@ -22,6 +22,7 @@
             labels:
               app: adsbhub
           spec:
+            hostname: "{{ adsbhub_host }}"
             containers:
             - name: adsbhub
               image: "{{ adsbhub_image }}"

@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: influx
-        namespace: default
+        namespace: adsb
         labels:
           app: influx
       spec:
@@ -22,6 +22,7 @@
             labels:
               app: influx
           spec:
+            hostname: "{{ influxdb_host }}"
             containers:
             - name: influx
               image: "{{ influxdb_image }}"
@@ -47,8 +48,8 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: influx
-        namespace : default
+        name: "{{ influxdb_host }}"
+        namespace : adsb
       spec:
         loadBalancerIP: "{{ influxdb_ip }}"
         selector:

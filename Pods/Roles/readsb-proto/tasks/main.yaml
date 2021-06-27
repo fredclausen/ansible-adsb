@@ -9,41 +9,7 @@
         labels:
           readsb: "usb"
         name: "{{ readsb_node }}"
-
-- name: Deploy readsb PV
-  k8s:
-    state: "{{ workload_state }}"
-    definition:
-      apiVersion: v1
-      kind: PersistentVolume
-      metadata:
-        name: readsb
-      spec:
-        storageClassName: nfs-class
-        capacity:
-          storage: 50Gi
-        accessModes:
-          - ReadWriteMany
-        nfs:
-          server: "{{ nfs_share_ip }}"
-          path: "{{ nfs_share_path }}"
-
-- name: Deploy readsb PVC
-  k8s:
-    state: "{{ workload_state }}"
-    definition:
-      kind: PersistentVolumeClaim
-      apiVersion: v1
-      metadata:
-        name: readsb-run
-        namespace: default
-      spec:
-        storageClassName: nfs-class
-        accessModes:
-          - ReadWriteMany
-        resources:
-          requests:
-            storage: 50Gi
+        namespace: adsb
 
 - name: Deploy readsb
   k8s:
@@ -53,7 +19,7 @@
       kind: Deployment
       metadata:
         name: readsb
-        namespace: default
+        namespace: adsb
         labels:
           app: readsb
       spec:
@@ -68,6 +34,7 @@
             labels:
               app: readsb
           spec:
+            hostname: "{{ adsb_host }}"
             nodeSelector:
               readsb: usb
             containers:
@@ -100,11 +67,12 @@
               - name: READSB_RTLSDR_DEVICE
                 value: "{{ readsb_serial }}"
               - name: READSB_RTLSDR_PPM
-                value: "2"
+                value: "0"
               - name: READSB_NET_CONNECTOR
                 value: "{{ readsb_net_connector }}"
               - name: INFLUXDBURL
-                value: "{{ readsb_influxsb_url }}"
+              #  value: "{{ readsb_influxsb_url }}"
+                value: ""
               ports:
               - name: web
                 containerPort: 8080
@@ -153,10 +121,10 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: readsb-beast
-        namespace : default
+        name: "{{ adsb_host }}"
+        namespace: adsb
       spec:
-        loadBalancerIP: "{{ adsb_host }}"
+        loadBalancerIP: "{{ adsb_ip }}"
         selector:
           app: readsb
         ports:

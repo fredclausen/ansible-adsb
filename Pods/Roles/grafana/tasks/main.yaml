@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: grafana
-        namespace: default
+        namespace: services
         labels:
           app: grafana
       spec:
@@ -22,6 +22,7 @@
             labels:
               app: grafana
           spec:
+            hostname: "{{ grafana_host }}"
             nodeSelector:
               acarshub: usb
             containers:
@@ -33,12 +34,12 @@
               env:
               volumeMounts:
               - mountPath: /var/lib/grafana
-                name: readsb-run
+                name: guac-run
                 subPath: grafana
             volumes:
-            - name: readsb-run
+            - name: guac-run
               persistentVolumeClaim:
-                claimName: readsb-run
+                claimName: guac-run
                 
 - name: Deploy grafana service
   k8s:
@@ -47,8 +48,8 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: grafana
-        namespace : default
+        name: "{{ grafana_host }}"
+        namespace : services
       spec:
         loadBalancerIP: "{{ grafana_ip }}"
         selector:

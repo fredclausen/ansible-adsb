@@ -1,0 +1,40 @@
+---
+- name: Deploy DNS Namespace
+  k8s:
+    state: "present"
+    definition:
+      kind: "Namespace"
+      metadata:
+        name: dns
+        labels:
+          name: dns
+
+- name: Deploy ASDB Namespace
+  k8s:
+    state: "present"
+    definition:
+      kind: "Namespace"
+      metadata:
+        name: adsb
+        labels:
+          name: adsb
+
+- name: Deploy Services Namespace
+  k8s:
+    state: "present"
+    definition:
+      kind: "Namespace"
+      metadata:
+        name: services
+        labels:
+          name: services
+
+- name: Deploy Home Automation Namespace
+  k8s:
+    state: "present"
+    definition:
+      kind: "Namespace"
+      metadata:
+        name: homeautomation
+        labels:
+          name: homeautomation

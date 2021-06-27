@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: radarbox
-        namespace: default
+        namespace: adsb
         labels:
           app: radarbox
       spec:
@@ -22,9 +22,10 @@
             labels:
               app: radarbox
           spec:
+            hostname: "{{ radarbox_host }}"
             containers:
             - name: radarbox
-              image: "{{ radarbox_image }}"
+              image: fredclausen/radarbox:test
               imagePullPolicy: Always
               env:
               - name: TZ
@@ -41,6 +42,10 @@
                 value: "{{ readsb_beastout_text_port }}"
               - name: SHARING_KEY
                 value: "{{ radarbox_sharing_key }}"
+              - name: UAT_RECEIVER_HOST
+                value: "{{ uat_host }}"
+              - name: VERBOSE_LOGGING
+                value: "false"
               ports:
               - name: mlat
                 containerPort: 30105
@@ -52,8 +57,8 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: radarbox
-        namespace : default
+        name: "{{ radarbox_host }}"
+        namespace: adsb
       spec:
         loadBalancerIP: "{{ radarbox_ip }}"
         selector:
@@ -63,4 +68,8 @@
           port: "{{ radarbox_mlat_port }}"
           targetPort: 30105
           name : mlat
+        - protocol: TCP
+          port: 32088
+          targetPort: 32088
+          name: unknown
         type: LoadBalancer 

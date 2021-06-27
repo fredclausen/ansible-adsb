@@ -1,31 +1,31 @@
 ---
-- name: Deploy RawFlight
+- name: Deploy Plane Watch
   k8s:
     state: "{{ workload_state }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: rawflight
+        name: planewatch
         namespace: adsb
         labels:
-          app: rawflight
+          app: planewatch
       spec:
         replicas: 1
         strategy:
           type: Recreate
         selector:
           matchLabels:
-            app: rawflight
+            app: planewatch
         template:
           metadata:
             labels:
-              app: rawflight
+              app: planewatch
           spec:
-            hostname: "{{ rawflight_host }}"
+            hostname: "{{ planewatch_host }}"
             containers:
-            - name: rawflight
-              image: "{{ rawflight_image }}"
+            - name: planewatch
+              image: planewatch/plane-watch
               imagePullPolicy: Always
               env:
               - name: TZ
@@ -34,3 +34,5 @@
                 value: "{{ adsb_host }}"
               - name: BEASTPORT
                 value: "{{ readsb_beastout_text_port }}"
+              - name: API_KEY
+                value: 094e6620-b937-47fb-9e34-5a5a4f93ad63

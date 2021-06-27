@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: tar1090
-        namespace: default
+        namespace: adsb
         labels:
           app: tar1090
       spec:
@@ -22,6 +22,7 @@
             labels:
               app: tar1090
           spec:
+            hostname: "{{ tar1090_host }}"
             containers:
             - name: tar1090
               image: "{{ tar1090_image }}"
@@ -62,8 +63,8 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: tar1090-web
-        namespace : default
+        name: "{{ tar1090_host }}"
+        namespace: adsb
       spec:
         loadBalancerIP: "{{ tar1090_ip }}"
         selector:

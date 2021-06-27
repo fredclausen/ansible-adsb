@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: mlat
-        namespace: default
+        namespace: adsb
         labels:
           app: mlat
       spec:
@@ -22,6 +22,7 @@
             labels:
               app: mlat
           spec:
+            hostname: "{{ mlat_host }}"
             containers:
             - name: mlat
               image: "{{ readsb_image }}"
@@ -56,10 +57,10 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: mlat-beast
-        namespace : default
+        name: "{{ mlat_host }}"
+        namespace: adsb
       spec:
-        loadBalancerIP: "{{ mlat_host }}"
+        loadBalancerIP: "{{ mlat_ip }}"
         selector:
           app: mlat
         ports:

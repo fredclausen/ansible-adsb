@@ -1,6 +1,6 @@
 
 ---
-- name: label node with RTLSDR dongle for rtlsdr-airband
+- name: label node with Z-Wave Dongle
   k8s:
     state: "{{ workload_state }}"
     definition:
@@ -19,7 +19,7 @@
       kind: Deployment
       metadata:
         name: homeassistant
-        namespace: default
+        namespace : homeautomation
         labels:
           app: homeassistant
       spec:
@@ -35,6 +35,7 @@
               app: homeassistant
           spec:
             hostNetwork: true
+            hostname: "{{ homeassistant_host }}"
             nodeSelector:
               homeassistant: usb
             containers:
@@ -48,31 +49,31 @@
                 value: "America/Denver"
               volumeMounts:
                 - mountPath: /config
-                  name: readsb-run
+                  name: homeautomation-run
                   subPath: homeassistant
                 - mountPath: /dev/
                   name: usb
                 - mountPath: /sys
                   name: sys
             volumes:
-            - name: readsb-run
+            - name: homeautomation-run
               persistentVolumeClaim:
-                claimName: readsb-run
+                claimName: homeautomation-run
             - name: usb
               hostPath:
                 path: /dev/
             - name: sys
               hostPath:
                 path: /sys/
-- name: Deploy rest980 service
+- name: Deploy homeassistant service
   k8s:
     state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1
       metadata:
-        name: homeassistant
-        namespace : default
+        name: "{{ homeassistant_host }}"
+        namespace : homeautomation
       spec:
         loadBalancerIP: 192.168.31.204
         selector:

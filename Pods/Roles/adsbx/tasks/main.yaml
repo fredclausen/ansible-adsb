@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: adsbx
-        namespace: default
+        namespace: adsb
         labels:
           app: adsbx
       spec:
@@ -22,6 +22,7 @@
             labels:
               app: adsbx
           spec:
+            hostname: "{{ adsbx_host }}"
             containers:
             - name: adsbx
               image: "{{ adsbexchange_image }}"
@@ -52,8 +53,8 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: adsbx
-        namespace : default
+        name: "{{ adsbx_host }}"
+        namespace: adsb
       spec:
         loadBalancerIP: "{{ adsbexchange_ip }}"
         selector:

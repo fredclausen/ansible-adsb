@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: cloudflared
-        namespace: default
+        namespace: dns
         labels:
           app: cloudflared
       spec:
@@ -22,6 +22,7 @@
             labels:
               app: cloudflared
           spec:
+            hostname: "{{ cloudflared_host }}"
             containers:
             - name: pihole
               image: "{{ cloudflared_image }}"
@@ -49,8 +50,8 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: cloudfared-dns-service
-        namespace: default
+        name: "{{ cloudflared_host }}"
+        namespace: dns
       spec:
         loadBalancerIP: "{{ cloudflared_ip }}"
         selector:

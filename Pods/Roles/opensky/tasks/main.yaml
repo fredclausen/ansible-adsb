@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: opensky
-        namespace: default
+        namespace: adsb
         labels:
           app: opensky
       spec:
@@ -22,6 +22,7 @@
             labels:
               app: opensky
           spec:
+            hostname: "{{ opensky_host }}"
             containers:
             - name: opensky
               image: "{{ opensky_image }}"

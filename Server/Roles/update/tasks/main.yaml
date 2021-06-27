@@ -10,7 +10,7 @@
 - name: apt-get update
   apt:
     update-cache: yes
-  changed_when: 0
+    cache_valid_time: 86400
 
 - name: Install required packages for the system
   apt:
@@ -30,42 +30,37 @@
       - glusterfs-client
       - parted
       - cifs-utils
-      #- python3
+      - python3
       - pi-bluetooth
     state: present
 
-  # get a list of packages that have updates
-- name: get list of pending upgrades
-  command: apt-get --simulate dist-upgrade
-  args:
-    warn: false # don't warn us about apt having its own plugin
-  register: apt_simulate
-  changed_when: 0
+- name: Install required python modules
+  pip:
+    name: 
+      - docker
+      - openshift
+    state: latest
 
-# pick out list of pending updates from command output
-#- name: parse apt-get output to get list of changed packages
-#  set_fact:
-#    updates: '{{ apt_simulate.stdout_lines | select("match", "^Inst ") | list | splitpart(1, " ") | list | sort }}'
-#  changed_when: 0
-
-# tell user about packages being updated
-#- name: show pending updates
-#  debug:
-#    var: updates
+- name: install all updates
+  apt:
+    upgrade: dist
+- name: List installed and updated packages
+  shell: grep -E "^$(date +%Y-%m-%d).+ (install|upgrade) " /var/log/dpkg.log |cut -d " " -f 3-5
+  register: result
+- name: Show Output
+  debug: msg="{{ result.stdout_lines }}"
 
 # if a new kernel is incoming, remove old ones to avoid full /boot
 - name: apt-get autoremove
   command: apt-get -y autoremove
   args:
     warn: false
-  when: '"Inst linux-image-" in apt_simulate.stdout'
-  changed_when: 0
 
-# do the actual apt-get dist-upgrade
-- name: apt-get dist-upgrade
-  apt:
-    upgrade: dist # upgrade all packages to latest version
-  register: upgrade_output
+# # do the actual apt-get dist-upgrade
+# - name: apt-get dist-upgrade
+#   apt:
+#     upgrade: dist # upgrade all packages to latest version
+#   register: upgrade_output
 
 # check if we need a reboot
 - name: check if reboot needed

@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: fr24
-        namespace: default
+        namespace: adsb
         labels:
           app: fr24
       spec:
@@ -22,6 +22,7 @@
             labels:
               app: fr24
           spec:
+            hostname: "{{ fr24_host }}"
             containers:
             - name: fr24
               image: "{{ fr24_image }}"
@@ -50,8 +51,8 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: fr24-web
-        namespace : default
+        name: "{{ fr24_host }}"
+        namespace: adsb
       spec:
         loadBalancerIP: "{{ fr24_ip }}"
         selector:

@@ -1,0 +1,83 @@
+---
+
+- name: Storage class NFS
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: StorageClass
+      apiVersion: storage.k8s.io/v1
+      metadata:
+        name: nfs-class
+      provisioner: kubernetes.io/fake-nfs
+
+- name: Deploy readsb PV
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: readsb
+        namespace: adsb
+      spec:
+        storageClassName: nfs-class
+        capacity:
+          storage: 50Gi
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          server: "{{ nfs_share_ip }}"
+          path: "{{ nfs_share_path }}"
+
+- name: Deploy readsb PVC
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: readsb-run
+        namespace: adsb
+      spec:
+        storageClassName: nfs-class
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 50Gi
+
+- name: Deploy home automation PV
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: homeautomation
+        namespace: homeautomation
+      spec:
+        storageClassName: nfs-class
+        capacity:
+          storage: 50Gi
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          server: "{{ nfs_share_ip }}"
+          path: "{{ nfs_share_path }}"
+
+- name: Deploy home automation PVC
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: homeautomation-run
+        namespace: homeautomation
+      spec:
+        storageClassName: nfs-class
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 50Gi

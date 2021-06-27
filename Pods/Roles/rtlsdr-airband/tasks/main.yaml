@@ -5,6 +5,7 @@
       apiVersion: v1
       kind: Node
       metadata:
+        namespace: adsb
         labels:
           airband: "usb"
         name: "{{ airband_node }}"
@@ -17,7 +18,7 @@
       kind: Deployment
       metadata:
         name: rtlsdr-airband
-        namespace: default
+        namespace: adsb
         labels:
           app: rtlsdr-airband
       spec:
@@ -32,6 +33,7 @@
             labels:
               app: rtlsdr-airband
           spec:
+            hostname: "{{ rtlsdrairband_host }}"
             nodeSelector:
               airband: usb
             containers:
@@ -96,8 +98,8 @@
       kind: Service
       apiVersion: v1
       metadata:
-        name: rtlsdr-airband
-        namespace : default
+        name: "{{ rtlsdrairband_host }}"
+        namespace: adsb
       spec:
         loadBalancerIP: "{{ airband_ip }}"
         selector:

@@ -10,15 +10,11 @@
       when: pihole_install == true
     - role: guac
       when: guac_install == true
-    - role: transmission
-      when: transmission_install == true
     - role: grafana
       when: garfana_install == true
-    - role: wireguard
-      when: wireguard_install == true
-    - role: rest_980
+    - role: rest980
       when: rest_980_install == true
-    - role: node_red
+    - role: node-red
       when: node_red_install == true
     - role: homeassistant
       when: homeassistant_install == true

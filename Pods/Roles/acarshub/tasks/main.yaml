@@ -1,5 +1,58 @@
 
 ---
+- name: Create local storage class
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: StorageClass
+      apiVersion: storage.k8s.io/v1
+      metadata:
+        name: my-local-storage
+        namespace: adsb
+      provisioner: kubernetes.io/no-provisioner
+      volumeBindingMode: WaitForFirstConsumer
+- name: Create PV for ACARSHub
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: acarshub
+        namespace: adsb
+      spec:
+        capacity:
+          storage: 1Gi
+        accessModes:
+        - ReadWriteOnce
+        persistentVolumeReclaimPolicy: Retain
+        storageClassName: my-local-storage
+        local:
+          path: /home/ubuntu/acarshub
+        nodeAffinity:
+          required:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - cluster-worker02
+- name: Create PVC for ACARSHub
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: acarshub-pvc
+        namespace: adsb
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        storageClassName: my-local-storage
+        resources:
+          requests:
+            storage: 1Gi
 - name: label node with RTLSDR dongle for rtlsdr-airband
   k8s:
     state: "{{ workload_state }}"
@@ -19,7 +72,7 @@
       kind: Deployment
       metadata:
         name: acarshub
-        namespace: default
+        namespace: adsb
         labels:
           app: acarshub
       spec:
@@ -34,6 +87,7 @@
             labels:
               app: acarshub
           spec:
+            hostname: "{{ acarshub_host }}"
             nodeSelector:
               acarshub: usb
             containers:
@@ -49,16 +103,18 @@
                 value: "{{ acarshub_acars_freqs }}"
               - name: FREQS_VDLM
                 value: "{{ acarshub_vdlm_freqs }}"
-              - name: GAIN
-                value:
-              - name: GAIN_ACARS
-                value: "{{ acarshub_gain_acars }}"
-              - name: GAIN_VDLM
-                value: "{{ acarshub_gain_vdlm }}"
-              - name: SERIAL_ACARS
-                value: "{{ acarshub_serial_acars }}"
-              - name: SERIAL_VDLM
-                value: "{{ acarshub_serial_vdlm }}"
+              - name: SERIAL
+                value: "{{ acarshub_serial_acars }},,A36.0;{{ acarshub_serial_vdlm }},,A36.0"
+              #- name: GAIN
+              #  value:
+              #- name: GAIN_ACARS
+              #  value: "{{ acarshub_gain_acars }}"
+              #- name: GAIN_VDLM
+              #  value: "{{ acarshub_gain_vdlm }}"
+              #- name: SERIAL_ACARS
+              #  value: "{{ acarshub_serial_acars }}"
+              #- name: SERIAL_VDLM
+              #  value: "{{ acarshub_serial_vdlm }}"
               - name: STATION_ID_ACARS
                 value: "{{ acarshub_stationid_acars }}"
               - name: STATION_ID_VDLM
@@ -74,37 +130,45 @@
               - name: QUIET_LOGS
                 value: "True"
               - name: DEBUG_LOGGING
-                value: "True"
+                value: ""
               - name: EXTREME_LOGGING
                 value: ""
               - name: DB_SAVEALL
                 value: ""
               - name: TAR1090_URL
-                value: "http://192.168.31.214/"
+                value: "tar1090"
               - name: IATA_OVERRIDE
                 value: "UP|UPS|United Parcel Service;GS|FTH|Mountain Aviation (Foothills)"
+              - name: ENABLE_ADSB
+                value: "true"
+              - name: ADSB_LAT
+                value: "{{ lat }}"
+              - name: ADSB_LON
+                value: "{{ lon }}"
+              - name: ADSB_URL
+                value: "http://{{ tar1090_host }}/data/aircraft.json"
               volumeMounts:
               - mountPath: /run/acars
-                name: readsb-run
+                name: acarshub-volume
                 subPath: acars
               - mountPath: /dev/bus/
                 name: usb
             volumes:
-            - name: readsb-run
+            - name: acarshub-volume
               persistentVolumeClaim:
-                claimName: readsb-run
+                claimName: acarshub-pvc
             - name: usb
               hostPath:
                 path: /dev/bus/
-- name: Deploy icecast service
+- name: Deploy ACARS Hub service
   k8s:
     state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1
       metadata:
-        name: acarshub
-        namespace : default
+        name: "{{ acarshub_host }}"
+        namespace: adsb
       spec:
         loadBalancerIP: "{{ acarshub_ip }}"
         selector:
