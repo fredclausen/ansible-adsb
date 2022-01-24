@@ -62,6 +62,8 @@
               #  value: "{{ acarshub_serial_acars }}"
               #- name: SERIAL_VDLM
               #  value: "{{ acarshub_serial_vdlm }}"
+              - name: VDLM_FILTER_ENABLE
+                value: ""
               - name: STATION_ID_ACARS
                 value: "{{ acarshub_stationid_acars }}"
               - name: STATION_ID_VDLM
@@ -73,7 +75,7 @@
               - name: ENABLE_WEB
                 value: "true"
               - name: FEED
-                value: "True"
+                value: ""
               - name: QUIET_LOGS
                 value: "True"
               - name: DEBUG_LOGGING

@@ -25,7 +25,7 @@
             hostname: "{{ radarbox_host }}"
             containers:
             - name: radarbox
-              image: fredclausen/radarbox:test
+              image: mikenye/radarbox:latest
               imagePullPolicy: Always
               env:
               - name: TZ

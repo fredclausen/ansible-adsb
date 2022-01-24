@@ -44,6 +44,8 @@
                 value: "{{ mlat_out_port_text }}"
               - name: HEYWHATSTHAT_PANORAMA_ID
                 value: "NN6R7EXG"
+              - name: TAR1090_ENABLE_AC_DB
+                value: "true"
               ports:
               - name: web
                 containerPort: 80

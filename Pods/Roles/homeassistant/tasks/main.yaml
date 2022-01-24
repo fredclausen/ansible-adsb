@@ -34,8 +34,7 @@
             labels:
               app: homeassistant
           spec:
-            hostNetwork: true
-            hostname: "{{ homeassistant_host }}"
+            hostNetwork: false
             nodeSelector:
               homeassistant: usb
             containers:
