@@ -11,6 +11,122 @@
           acarshub: "usb"
         name: "{{ acars_node }}"
 
+- name: Deploy acarsdec
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: acarsdec
+        namespace: adsb
+        labels:
+          app: acarsdec
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: acarsdec
+        template:
+          metadata:
+            labels:
+              app: acarsdec
+          spec:
+            hostname: "acarsdec"
+            nodeSelector:
+              acarshub: usb
+            containers:
+            - name: acarsdec
+              image: "ghcr.io/sdr-enthusiasts/docker-acarsdec:latest"
+              imagePullPolicy: Always
+              securityContext:
+                privileged: true
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: QUIET_LOGS
+                value: ""
+              - name: SERIAL
+                value: "{{ acarshub_serial_acars }}"
+              - name: GAIN
+                value: "-10"
+              - name: PPM
+                value: "0"
+              - name: FREQUENCIES
+                value : "130.025;130.450;131.125;131.550"
+              - name: FEED_ID
+                value: "{{ acarshub_stationid_acars }}"
+              - name: SERVER
+                value: "192.168.31.226"
+              volumeMounts:
+              - mountPath: /dev/bus/
+                name: usb
+            volumes:
+            - name: usb
+              hostPath:
+                path: /dev/bus/
+
+- name: Deploy dumpvdl2
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: dumpvdl2
+        namespace: adsb
+        labels:
+          app: dumpvdl2
+      spec:
+        replicas: 1
+        strategy:
+          type: Recreate
+        selector:
+          matchLabels:
+            app: dumpvdl2
+        template:
+          metadata:
+            labels:
+              app: dumpvdl2
+          spec:
+            hostname: "dumpvdl2"
+            nodeSelector:
+              acarshub: usb
+            containers:
+            - name: dumpvdl2
+              image: "ghcr.io/sdr-enthusiasts/docker-dumpvdl2:latest"
+              imagePullPolicy: Always
+              securityContext:
+                privileged: true
+              env:
+              - name: TZ
+                value: "{{ timezone }}"
+              - name: QUIET_LOGS
+                value: ""
+              - name: SERIAL
+                value: "{{ acarshub_serial_vdlm }}"
+              - name: GAIN
+                value: "400"
+              - name: PPM
+                value: "0"
+              - name: FREQUENCIES
+                value : "136650000;136700000;136975000;136925000;136800000"
+              - name: FEED_ID
+                value: "{{ acarshub_stationid_vdlm }}"
+              - name: SERVER
+                value: "192.168.31.226"
+              - name: VDLM_FILTER_ENABLE
+                value: "false"
+              volumeMounts:
+              - mountPath: /dev/bus/
+                name: usb
+            volumes:
+            - name: usb
+              hostPath:
+                path: /dev/bus/
+
 - name: Deploy ACARS Hub
   k8s:
     state: "{{ workload_state }}"
@@ -35,51 +151,27 @@
               app: acarshub
           spec:
             hostname: "{{ acarshub_host }}"
-            nodeSelector:
-              acarshub: usb
             containers:
             - name: acarshub
-              image: "fredclausen/acarshub:latest"
+              image: "ghcr.io/sdr-enthusiasts/docker-acarshub:latest"
               imagePullPolicy: Always
               securityContext:
                 privileged: true
               env:
               - name: TZ
                 value: "{{ timezone }}"
-              - name: FREQS_ACARS
-                value: "{{ acarshub_acars_freqs }}"
-              - name: FREQS_VDLM
-                value: "{{ acarshub_vdlm_freqs }}"
-              - name: SERIAL
-                value: "{{ acarshub_serial_acars }},,A36.0;{{ acarshub_serial_vdlm }},,A36.0"
-              #- name: GAIN
-              #  value:
-              #- name: GAIN_ACARS
-              #  value: "{{ acarshub_gain_acars }}"
-              #- name: GAIN_VDLM
-              #  value: "{{ acarshub_gain_vdlm }}"
-              #- name: SERIAL_ACARS
-              #  value: "{{ acarshub_serial_acars }}"
-              #- name: SERIAL_VDLM
-              #  value: "{{ acarshub_serial_vdlm }}"
-              - name: VDLM_FILTER_ENABLE
-                value: ""
-              - name: STATION_ID_ACARS
-                value: "{{ acarshub_stationid_acars }}"
-              - name: STATION_ID_VDLM
-                value: "{{ acarshub_stationid_vdlm }}"
               - name: ENABLE_VDLM
-                value: "true"
+                value: "external"
               - name: ENABLE_ACARS
-                value: "true"
+                value: "external"
               - name: ENABLE_WEB
                 value: "true"
               - name: FEED
-                value: ""
+                value: "true"
               - name: QUIET_LOGS
-                value: "True"
-              - name: DEBUG_LOGGING
                 value: ""
+              - name: DEBUG_LOGGING
+                value: "true"
               - name: EXTREME_LOGGING
                 value: ""
               - name: DB_SAVEALL
@@ -109,15 +201,18 @@
             - name: usb
               hostPath:
                 path: /dev/bus/
-- name: Deploy ACARS Hub Service
+
+- name: Deploy ACARS Hub Service Web
   k8s:
     state: "{{ workload_state }}"
     definition:
       kind: Service
       apiVersion: v1
       metadata:
-        name: "{{ acarshub_host }}"
+        name: "{{ acarshub_host }}-web"
         namespace: adsb
+        annotations:
+          metallb.universe.tf/allow-shared-ip: shared-ip
       spec:
         loadBalancerIP: "{{ acarshub_ip }}"
         selector:
@@ -127,4 +222,52 @@
           port: 80
           targetPort: 80
           name : output
+        type: LoadBalancer
+
+- name: Deploy ACARS Hub Service UDP
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: "{{ acarshub_host }}-udp"
+        namespace: adsb
+        annotations:
+          metallb.universe.tf/allow-shared-ip: shared-ip
+      spec:
+        loadBalancerIP: "{{ acarshub_ip }}"
+        selector:
+          app: acarshub
+        ports:
+        - protocol: UDP
+          port: 5555
+          targetPort: 5555
+          name: vdlm
+        - protocol: UDP
+          port: 5550
+          targetPort: 5550
+          name: acars
+        type: LoadBalancer
+
+- name: acarsdec service
+  k8s:
+    state: "{{ workload_state }}"
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: "acarsdec"
+        namespace: adsb
+        annotations:
+          metallb.universe.tf/allow-shared-ip: shared-ip
+      spec:
+        loadBalancerIP: "192.168.31.228"
+        selector:
+          app: acarsdec
+        ports:
+        - protocol: TCP
+          port: 15550
+          targetPort: 15550
+          name: vdlm
         type: LoadBalancer
