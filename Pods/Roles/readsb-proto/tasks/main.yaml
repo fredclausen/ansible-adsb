@@ -37,7 +37,7 @@
             hostname: "{{ adsb_host }}"
             nodeSelector:
               readsb: usb
-            containers:
+            containers: 
             - name: readsb
               image: "{{ readsb_image }}"
               imagePullPolicy: Always
